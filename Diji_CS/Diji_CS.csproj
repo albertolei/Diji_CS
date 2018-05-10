@@ -83,6 +83,7 @@
     <Compile Include="RCUtil.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Utils\LongitudinalBarUtil.cs" />
+    <Compile Include="Utils\SpreadFootingUtil.cs" />
     <Compile Include="Utils\StirrupUtil.cs" />
   </ItemGroup>
   <ItemGroup>

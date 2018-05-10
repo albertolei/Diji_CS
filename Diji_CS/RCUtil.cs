@@ -76,7 +76,7 @@ namespace Diji_CS
             TFApplication tfapp = tfapp_list.TFApplication;
             tfapp.ModelReferenceAddFrame(app.ActiveModelReference, frame);
         }
-
+        
         //画基础
         public Element create_foundation(double length, double width, double height)
         {
@@ -91,6 +91,7 @@ namespace Diji_CS
             column.Move(position);
             return column;
         }
+        
         //画基础配筋，参数分别为基础的长、宽、高
         public Element create_foundation_rebars(double length, double width, double height)
         {
@@ -309,7 +310,7 @@ namespace Diji_CS
             return rebars;
         }
         //画柱纵筋，从上而下每一个为一根
-        public Element create_column_longitudinal_rebars(double length, double width, double height, double foundation_height, double lae)
+        public Element create_column_longitudinal_rebars(double length, double width, double height, double foundation_height, string type)
         {
 
             return null;

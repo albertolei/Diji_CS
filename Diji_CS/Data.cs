@@ -21,7 +21,13 @@ namespace Diji_CS
         public static double x_down_rebar_diameter = 25, x_down_rebar_spacing = 100, y_down_rebar_diameter = 25, y_down_rebar_spacing = 100;
         public static int STIRRUPMUTIPLE = 10;
 
+        public static double ANGLE_45 = 45;
         public static double ANGLE_90 = 90;
         public static double ANGLE_135 = 135;
+        public static double ANGLE_180 = 180;
+        public static double ANGLE_225 = 225;
+        public static double ANGLE_270 = 270;
+        public static double ANGLE_315 = 315;
+        public static double ANGLE_360 = 360;
     }
 }

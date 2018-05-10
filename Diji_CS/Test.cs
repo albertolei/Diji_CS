@@ -22,12 +22,14 @@ namespace Diji_CS
 
         public static void sayHello(string unparsed)
         {
-            //Element element = LongitudinalBarUtil.create_longitudinal_bar(25, 1500 - 50, 200 - 50, Data.ANGLE_90);
+            
             Application app = Utilities.ComApp;
             //TextElement text = app.CreateTextElement1(null, "数字化设计部", app.Point3dFromXYZ(0, 0, 0), app.Matrix3dZero());
             //app.ActiveModelReference.AddElement(text);
             //app.ActiveModelReference.AddElement(element);
-            Element element = StirrupUtil.create_closed_stirrup(1000, 400);
+            //Element element = StirrupUtil.create_closed_stirrup(1000, 400);
+            //Element element = LongitudinalBarUtil.create_longitudinal_bar(25, 1500 - 50, 200 - 50, Data.ANGLE_90);
+            Element element = LongitudinalBarUtil.create_longitudinal_bar_type2(800, 800, 1500, 1500, 1500, 400, 1500-50, 200-50);
             app.ActiveModelReference.AddElement(element);
             
         }
