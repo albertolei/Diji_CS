@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<KeyinTree xmlns="http://www.bentley.com/schemas/1.0/MicroStation/AddIn/KeyinTree.xsd">
+  <RootKeyinTable ID="root">
+    <Keyword SubtableRef="CommandsList" CommandClass="MacroCommand" CommandWord="Diji_CS" >
+      <Options Required="true"/>
+    </Keyword>
+  </RootKeyinTable>
+
+  <SubKeyinTables>
+    <KeyinTable ID="CommandsList">
+      <Keyword SubtableRef ="Commands" CommandWord="CommandsList">
+          <Options Required="true" />
+      </Keyword>
+    </KeyinTable>
+    
+    <KeyinTable ID="Commands">
+      <Keyword CommandWord="SayHello" />
+      <Keyword CommandWord="draw" />
+    </KeyinTable>
+  </SubKeyinTables>
+
+  <KeyinHandlers>
+    <!--必须是静态方法-->
+    <KeyinHandler Keyin="Diji_CS CommandsList SayHello" Function="Diji_CS.Test.sayHello"/>
+    <KeyinHandler Keyin="Diji_CS CommandsList draw" Function="Diji_CS.CommandsList.test"/>
+  </KeyinHandlers>
+</KeyinTree>
