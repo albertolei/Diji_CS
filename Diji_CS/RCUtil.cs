@@ -190,7 +190,7 @@ namespace Diji_CS
             rebars = app.SmartSolid.SolidUnion(rebars.AsSmartSolidElement, x_down_rebars.AsSmartSolidElement);
             return rebars;
         }
-        //画柱纵筋,参数分别为柱子的长、宽、高和基础高度
+        //画柱纵筋, 参数分别为柱子的长、宽、高和基础高度
         public Element create_column_longitudinal_rebars(double length, double width, double height, double foundation_height)
         {
             Element longitudinal_rebars = null, anchor_bars = null, anchor_bending_rebars = null, anchor_bending_rebar_arcs = null, rebars = null;
@@ -309,11 +309,19 @@ namespace Diji_CS
             rebars = app.SmartSolid.SolidUnion(rebars.AsSmartSolidElement, anchor_bending_rebars.AsSmartSolidElement);
             return rebars;
         }
-        //画柱纵筋，从上而下每一个为一根
-        public Element create_column_longitudinal_rebars(double length, double width, double height, double foundation_height, string type)
+        //画柱纵筋, 参数分别为柱子的长、宽、高，基础的长、宽、高，弯折长度，箍筋类型
+        public Element create_column_longitudinal_rebars(double column_length, double column_width, double column_height, double foundation_length, double foundation_width, double foundation_height, double bending_length, string type)
         {
-
-            return null;
+            Element column_longitudinal_rebars = null;
+            switch (type)
+            {
+                case "1":
+                    break;
+                case "2":
+                    column_longitudinal_rebars = LongitudinalBarUtil.create_longitudinal_bar_type2(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length);
+                    break;
+            }
+            return column_longitudinal_rebars;
         }
         //画柱箍筋，参数分别为柱子的长、宽、高和基础高度
         public Element create_column_stirrups(double length, double width, double height, double foundation_height)
@@ -323,7 +331,7 @@ namespace Diji_CS
             double real_stirrup_spacing = (height - stirrup_diameter - 50) / (n - 1);
             for (int i = 0; i < n; i++)
             {
-                Element single_stirrup = create_single_stirrup(length, width, "1");
+                Element single_stirrup = create_single_stirrup(length, width, "2");
                 single_stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 + stirrup_diameter / 2 + 50 + i * real_stirrup_spacing));
                 if (i == 0)
                 {
@@ -423,7 +431,8 @@ namespace Diji_CS
             column = rc_util.create_column(800, 800, 1500, 400); 
             foundation = rc_util.create_foundation(1500, 1500, 400);
 
-            column_longitudinal_rebars = rc_util.create_column_longitudinal_rebars(800, 800, 1500, 400);
+            //column_longitudinal_rebars = rc_util.create_column_longitudinal_rebars(800, 800, 1500, 400);
+            column_longitudinal_rebars = rc_util.create_column_longitudinal_rebars(800, 800, 1500, 1500, 1500, 400, 50, "2");
             column_stirrups = rc_util.create_column_stirrups(800, 800, 1500, 400);
             foundation_rebars = rc_util.create_foundation_rebars(1500, 1500, 400); 
             
