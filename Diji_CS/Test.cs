@@ -40,7 +40,7 @@ namespace Diji_CS
         //    double anchor_bending_rebar_length = longitudinal_rebar_diameter * 6 > 150 ? longitudinal_rebar_diameter * 6 : 150;
         //    double angle = Math.Atan(length / width);
         //    double dx = Math.Cos(angle) * anchor_bending_rebar_length / 2, dy = Math.Sin(angle) * anchor_bending_rebar_length / 2;
-        //    Element anchor_bending_rebar_arc = app.SmartSolid.CreateTorus(null, anchor_bending_rebar_radius, longitudinal_rebar_diameter / 2, 90);
+        //    Element anchor_bending_rebar_arc = app.SmartSolid.CreateTorus(null, Data.anchor_bending_rebar_radius, longitudinal_rebar_diameter / 2, 90);
         //    //Transform3d transform3d = app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(1, 0, 0), app.Point3dFromXYZ(0, 0, -1)));
         //    //anchor_bending_rebar_arc.Transform(transform3d);
         //    //transform3d = app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, -1, 0), app.Point3dFromXYZ(dx, dy, 0)));
@@ -57,7 +57,7 @@ namespace Diji_CS
         //    }
         //    Transform3d transform3d = app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(1, 0, 0), app.Point3dFromXYZ(dx, dy, -1)));
         //    anchor_bending_rebar_arc.Transform(transform3d);
-        //    anchor_bending_rebar_arc.Move(app.Point3dFromXYZ(0, -anchor_bending_rebar_radius, 0));
+        //    anchor_bending_rebar_arc.Move(app.Point3dFromXYZ(0, -Data.anchor_bending_rebar_radius, 0));
         //    app.ActiveModelReference.AddElement(anchor_bending_rebar_arc);
         //}
         //public static void sayHello(string unparsed)

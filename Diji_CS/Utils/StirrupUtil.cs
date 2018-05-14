@@ -13,6 +13,45 @@ namespace Diji_CS.Utils
     {
         private static Bentley.Interop.MicroStationDGN.Application app = Utilities.ComApp;
 
+        //画柱箍筋，参数分别为柱子的长、宽、高和基础高度
+        public static Element create_column_stirrups(double length, double width, double height, double foundation_height, string type)
+        {
+            Element stirrups = null;
+
+            int n = (int)Math.Ceiling((height - Data.stirrup_diameter - 50) / Data.stirrup_spacing) + 1;
+            double real_stirrup_spacing = (height - Data.stirrup_diameter - 50) / (n - 1);
+            //柱箍筋
+            Element single_stirrup = null;
+            for (int i = 0; i < n; i++)
+            {
+                switch (type)
+                {
+                    case "1":
+                        single_stirrup = StirrupUtil.create_stirrup_type1(length - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2, width - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2, 3, 3);
+                        break;
+                    case "2":
+                        single_stirrup = StirrupUtil.create_stirrup_type2(length - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2, width - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2);
+                        break;
+                }
+                single_stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 + Data.stirrup_diameter / 2 + 50 + i * real_stirrup_spacing));
+                if (i == 0)
+                {
+                    stirrups = single_stirrup;
+                }
+                else
+                {
+                    stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, single_stirrup.AsSmartSolidElement);
+                }
+            }
+            //伸入基础箍筋
+            Element stirrup = StirrupUtil.create_stirrup_type2(length - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2, width - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2);
+            stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 - 100));
+            stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, stirrup.AsSmartSolidElement);
+            stirrup = StirrupUtil.create_stirrup_type2(length - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2, width - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2);
+            stirrup.Move(app.Point3dFromXYZ(0, 0, -foundation_height / 2 + Data.down_protective_layer_thinckness + Data.x_down_rebar_diameter + Data.y_down_rebar_diameter + 1 + Data.longitudinal_rebar_diameter / 2 + Data.anchor_bending_rebar_radius + Data.longitudinal_rebar_diameter));
+            stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, stirrup.AsSmartSolidElement);
+            return stirrups;
+        }
         public static Element create_stirrup_type1(double b, double h, int m, int n)
         {
             Data.bending_length = Data.stirrup_diameter * Data.STIRRUPMUTIPLE > 75 ? Data.stirrup_diameter * Data.STIRRUPMUTIPLE : 75;   //箍筋平直段长度

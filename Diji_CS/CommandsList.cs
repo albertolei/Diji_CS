@@ -17,7 +17,7 @@ namespace Diji_CS
         public static void test(string unparsed)
         {
             app.CommandState.StartDefaultCommand();
-            app.CommandState.StartPrimitive(RCUtil.create_instance());
+            app.CommandState.StartPrimitive(new RCCommand());
         }
     }
 }
