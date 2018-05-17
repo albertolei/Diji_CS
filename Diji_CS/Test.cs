@@ -29,7 +29,11 @@ namespace Diji_CS
             //app.ActiveModelReference.AddElement(element);
             //Element element = StirrupUtil.create_closed_stirrup(1000, 400);
             //Element element = LongitudinalBarUtil.create_longitudinal_bar(25, 1500 - 50, 200 - 50, Data.ANGLE_90);
-            Element element = LongitudinalBarUtil.create_longitudinal_bar_type2(800, 800, 1500, 1500, 1500, 400, 1500-50, 200-50);
+            //Element element = LongitudinalBarUtil.create_longitudinal_bar_type2(800, 800, 1500, 1500, 1500, 400, 1500-50, 200-50);
+            //Element element = RCUtil.create_column(800, 1500, 400);
+            //Element element = StirrupUtil.create_stirrup_type6(800);
+            //Element element = LongitudinalBarUtil.create_longitudinal_bar_type6(800,1500,1500,1500,400, 1500- Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - 1 - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2, 200-50);
+            Element element = StirrupUtil.create_closed_stirrup(800, 300, 500, 40);
             app.ActiveModelReference.AddElement(element);
             
         }

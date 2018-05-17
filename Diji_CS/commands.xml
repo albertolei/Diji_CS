@@ -22,6 +22,6 @@
   <KeyinHandlers>
     <!--必须是静态方法-->
     <KeyinHandler Keyin="Diji_CS CommandsList SayHello" Function="Diji_CS.Test.sayHello"/>
-    <KeyinHandler Keyin="Diji_CS CommandsList draw" Function="Diji_CS.CommandsList.test"/>
+    <KeyinHandler Keyin="Diji_CS CommandsList draw" Function="Diji_CS.CommandsList.draw"/>
   </KeyinHandlers>
 </KeyinTree>

@@ -20,7 +20,9 @@ namespace Diji_CS
         //底板底部x向钢筋直径、底板底部x向钢筋间距、底板底部y向钢筋直径、底板底部y向钢筋间距
         public static double x_down_rebar_diameter = 25, x_down_rebar_spacing = 100, y_down_rebar_diameter = 25, y_down_rebar_spacing = 100;
         public static int STIRRUPMUTIPLE = 10;
-
+        //圆形箍筋搭接长度
+        public static double lap_length = 300;
+        
         public static double ANGLE_0 = 0;
         public static double ANGLE_45 = 45;
         public static double ANGLE_90 = 90;

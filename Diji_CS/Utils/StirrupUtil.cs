@@ -13,13 +13,13 @@ namespace Diji_CS.Utils
     {
         private static Bentley.Interop.MicroStationDGN.Application app = Utilities.ComApp;
 
-        //画柱箍筋，参数分别为柱子的长、宽、高和基础高度
-        public static Element create_column_stirrups(double length, double width, double height, double foundation_height, string type)
+        //画柱箍筋，参数分别为柱子的长、宽、高和基础高度、类型
+        public static Element create_column_stirrups(double b, double h, double l, double foundation_height, string type)
         {
             Element stirrups = null;
 
-            int n = (int)Math.Ceiling((height - Data.stirrup_diameter - 50) / Data.stirrup_spacing) + 1;
-            double real_stirrup_spacing = (height - Data.stirrup_diameter - 50) / (n - 1);
+            int n = (int)Math.Ceiling((l - Data.stirrup_diameter - 50) / Data.stirrup_spacing) + 1;
+            double real_stirrup_spacing = (l - Data.stirrup_diameter - 50) / (n - 1);
             //柱箍筋
             Element single_stirrup = null;
             for (int i = 0; i < n; i++)
@@ -27,10 +27,10 @@ namespace Diji_CS.Utils
                 switch (type)
                 {
                     case "1":
-                        single_stirrup = StirrupUtil.create_stirrup_type1(length - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2, width - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2, 3, 3);
+                        single_stirrup = StirrupUtil.create_stirrup_type1(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, 8, 8);
                         break;
                     case "2":
-                        single_stirrup = StirrupUtil.create_stirrup_type2(length - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2, width - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2);
+                        single_stirrup = StirrupUtil.create_stirrup_type2(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter);
                         break;
                 }
                 single_stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 + Data.stirrup_diameter / 2 + 50 + i * real_stirrup_spacing));
@@ -44,78 +44,141 @@ namespace Diji_CS.Utils
                 }
             }
             //伸入基础箍筋
-            Element stirrup = StirrupUtil.create_stirrup_type2(length - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2, width - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2);
+            Element stirrup = null;
+            stirrup = StirrupUtil.create_stirrup_type2(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter);
             stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 - 100));
             stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, stirrup.AsSmartSolidElement);
-            stirrup = StirrupUtil.create_stirrup_type2(length - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2, width - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2);
+            stirrup = StirrupUtil.create_stirrup_type2(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter);
             stirrup.Move(app.Point3dFromXYZ(0, 0, -foundation_height / 2 + Data.down_protective_layer_thinckness + Data.x_down_rebar_diameter + Data.y_down_rebar_diameter + 1 + Data.longitudinal_rebar_diameter / 2 + Data.anchor_bending_rebar_radius + Data.longitudinal_rebar_diameter));
             stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, stirrup.AsSmartSolidElement);
             return stirrups;
         }
-        public static Element create_stirrup_type1(double b, double h, int m, int n)
+        //画柱箍筋，参数分别为柱子的直径、高和基础高度、类型
+        public static Element create_column_stirrups(double d, double l, double foundation_height, string type)
+        {
+            Element stirrups = null;
+            int n = (int)Math.Ceiling((l - Data.stirrup_diameter - 50) / Data.stirrup_spacing) + 1;
+            double real_stirrup_spacing = (l - Data.stirrup_diameter - 50) / (n - 1);
+            //柱箍筋
+            Element single_stirrup = null;
+            double angle_r = 0, diameter = 0, xzlength = 0, length = 0, angle = 0;
+
+            for (int i = 0; i < n; i++)
+            {
+                switch (type)
+                {
+                    case "6":
+                        angle_r = Data.lap_length / (Math.PI * d) * Data.ANGLE_360 / 2;
+                        single_stirrup = StirrupUtil.create_stirrup_type6(d - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter , angle_r);
+                        break;
+                    case "7":
+                        diameter = d - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter;
+                        xzlength = d / 3 >= 250 ? d / 3 : 250;
+                        angle_r = Math.Acos(xzlength / 2 / (diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2));
+                        length = (diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r) * 2;
+                        angle = Data.ANGLE_180 - angle_r / Math.PI * Data.ANGLE_180 * 2;
+                        single_stirrup = StirrupUtil.create_stirrup_type7(length, xzlength, diameter, angle);
+                        break;
+                        
+                }
+                single_stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 + Data.stirrup_diameter / 2 + 50 + i * real_stirrup_spacing));
+                if (i == 0)
+                {
+                    stirrups = single_stirrup;
+                }
+                else
+                {
+                    stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, single_stirrup.AsSmartSolidElement);
+                }
+            }
+            //伸入基础箍筋
+            Element stirrup = null;
+            switch (type)
+            {
+                case "6":
+                    stirrup = StirrupUtil.create_stirrup_type6(d - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter, angle_r);
+                    stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 - 100));
+                    stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, stirrup.AsSmartSolidElement);
+                    stirrup = StirrupUtil.create_stirrup_type6(d - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter, angle_r);
+                    stirrup.Move(app.Point3dFromXYZ(0, 0, -foundation_height / 2 + Data.down_protective_layer_thinckness + Data.x_down_rebar_diameter + Data.y_down_rebar_diameter + 1 + Data.longitudinal_rebar_diameter / 2 + Data.anchor_bending_rebar_radius + Data.longitudinal_rebar_diameter));
+                    break;
+                case "7":
+                    stirrup = StirrupUtil.create_stirrup_type7(length, xzlength, diameter, angle);
+                    stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 - 100));
+                    stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, stirrup.AsSmartSolidElement);
+                    stirrup = StirrupUtil.create_stirrup_type7(length, xzlength, diameter, angle);
+                    stirrup.Move(app.Point3dFromXYZ(0, 0, -foundation_height / 2 + Data.down_protective_layer_thinckness + Data.x_down_rebar_diameter + Data.y_down_rebar_diameter + 1 + Data.longitudinal_rebar_diameter / 2 + Data.anchor_bending_rebar_radius + Data.longitudinal_rebar_diameter));
+                    break;
+                    
+            }
+            stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, stirrup.AsSmartSolidElement);
+            return stirrups;
+        }
+        
+        public static Element create_stirrup_type1(double length, double width, int m, int n)
         {
             Data.bending_length = Data.stirrup_diameter * Data.STIRRUPMUTIPLE > 75 ? Data.stirrup_diameter * Data.STIRRUPMUTIPLE : 75;   //箍筋平直段长度
-            Element type2 = create_stirrup_type2(b, h);
+            Element type2 = create_stirrup_type2(length, width);
             Element y_stirrups = null;
             //m表示y向箍筋
             switch (m)
             {
                 case 3:
                     {
-                        Element y_stirrup = create_single_stirrup(h);
+                        Element y_stirrup = create_single_stirrup(width);
                         y_stirrups = y_stirrup;
                         break;
                     }
                 case 4:
                     {
-                        Element y_stirrup = create_closed_stirrup(b / 3, h);
+                        Element y_stirrup = create_closed_stirrup(length / 3, width);
                         y_stirrup.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(1, 0, 0), Math.PI));
                         y_stirrups = y_stirrup;
                         break;
                     }
                 case 5:
                     {
-                        Element y_stirrup1 = create_single_stirrup(h);
-                        y_stirrup1.Move(app.Point3dFromXY(- b / 4, 0));
-                        Element y_stirrup2 = create_closed_stirrup(b / 4, h);
+                        Element y_stirrup1 = create_single_stirrup(width);
+                        y_stirrup1.Move(app.Point3dFromXY(- length / 4, 0));
+                        Element y_stirrup2 = create_closed_stirrup(length / 4, width);
                         y_stirrup2.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(1, 0, 0), Math.PI));
-                        y_stirrup2.Move(app.Point3dFromXY(b / 4 / 2, 0));
+                        y_stirrup2.Move(app.Point3dFromXY(length / 4 / 2, 0));
                         y_stirrups = app.SmartSolid.SolidUnion(y_stirrup1.AsSmartSolidElement, y_stirrup2.AsSmartSolidElement);
                         break;
                     }
                 case 6:
                     {
-                        Element y_stirrup1 = create_closed_stirrup(b / 5, h);
-                        y_stirrup1.Move(app.Point3dFromXY( - b / 5, 0));
-                        Element y_stirrup2 = create_closed_stirrup(b / 5, h);
+                        Element y_stirrup1 = create_closed_stirrup(length / 5, width);
+                        y_stirrup1.Move(app.Point3dFromXY( - length / 5, 0));
+                        Element y_stirrup2 = create_closed_stirrup(length / 5, width);
                         y_stirrup2.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(1, 0, 0),Math.PI));
-                        y_stirrup2.Move(app.Point3dFromXY(b / 5, 0));
+                        y_stirrup2.Move(app.Point3dFromXY(length / 5, 0));
                         y_stirrups = app.SmartSolid.SolidUnion(y_stirrup1.AsSmartSolidElement, y_stirrup2.AsSmartSolidElement);
                         break;    
                     }
                 case 7:
                     {
-                        Element y_stirrup1 = create_closed_stirrup(b / 6, h);
+                        Element y_stirrup1 = create_closed_stirrup(length / 6, width);
                         y_stirrup1.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXY(1, 0), app.Point3dFromXY(0, 0), Math.PI));
-                        y_stirrup1.Move(app.Point3dFromXY( - b / 6 * 1.5, 0));
-                        Element y_stirrup2 = create_single_stirrup(h);
-                        y_stirrup2 = create_single_stirrup(h);
-                        Element y_stirrup3 = create_closed_stirrup(b / 6, h);
+                        y_stirrup1.Move(app.Point3dFromXY( - length / 6 * 1.5, 0));
+                        Element y_stirrup2 = create_single_stirrup(width);
+                        y_stirrup2 = create_single_stirrup(width);
+                        Element y_stirrup3 = create_closed_stirrup(length / 6, width);
                         y_stirrup3.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXY(1, 0), app.Point3dFromXY(0, 0), Math.PI));
-                        y_stirrup3.Move(app.Point3dFromXY(b / 6 * 1.5, 0));
+                        y_stirrup3.Move(app.Point3dFromXY(length / 6 * 1.5, 0));
                         y_stirrups = app.SmartSolid.SolidUnion(y_stirrup1.AsSmartSolidElement, y_stirrup2.AsSmartSolidElement);
                         y_stirrups = app.SmartSolid.SolidUnion(y_stirrups.AsSmartSolidElement, y_stirrup3.AsSmartSolidElement);
                         break;
                     }
                 case 8:
                     {
-                        Element y_stirrup1 = create_closed_stirrup(b / 7, h);
+                        Element y_stirrup1 = create_closed_stirrup(length / 7, width);
                         y_stirrup1.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXY(0, 0), app.Point3dFromXY(1, 0), Math.PI));
-                        y_stirrup1.Move(app.Point3dFromXY(-b / 7 * 2, 0));
-                        Element y_stirrup2 = create_closed_stirrup(b / 7, h);
-                        Element y_stirrup3 = create_closed_stirrup(b / 7 , h);
+                        y_stirrup1.Move(app.Point3dFromXY(-length / 7 * 2, 0));
+                        Element y_stirrup2 = create_closed_stirrup(length / 7, width);
+                        Element y_stirrup3 = create_closed_stirrup(length / 7 , width);
                         y_stirrup3.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXY(0, 0), app.Point3dFromXY(1, 0), Math.PI));
-                        y_stirrup3.Move(app.Point3dFromXY(b / 7 * 2, 0));
+                        y_stirrup3.Move(app.Point3dFromXY(length / 7 * 2, 0));
                         y_stirrups = app.SmartSolid.SolidUnion(y_stirrup1.AsSmartSolidElement, y_stirrup2.AsSmartSolidElement);
                         y_stirrups = app.SmartSolid.SolidUnion(y_stirrups.AsSmartSolidElement, y_stirrup3.AsSmartSolidElement);
                         break;
@@ -129,52 +192,52 @@ namespace Diji_CS.Utils
             {
                 case 3:
                     {
-                        Element x_stirrup = create_single_stirrup(b);
+                        Element x_stirrup = create_single_stirrup(length);
                         x_stirrup.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXY(0, 1), app.Point3dFromXY(1, 0))));
                         x_stirrups = x_stirrup;
                         break;
                     }
                 case 4:
                     {
-                        Element x_stirrup = create_closed_stirrup(b, h / 3);
+                        Element x_stirrup = create_closed_stirrup(length, width / 3);
                         x_stirrup.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), Math.PI));
                         x_stirrups = x_stirrup;
                         break;
                     }
                 case 5:
                     {
-                        Element x_stirrup1 = create_single_stirrup(b);
+                        Element x_stirrup1 = create_single_stirrup(length);
                         x_stirrup1.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXY(0, 1), app.Point3dFromXY(1, 0))));
-                        x_stirrup1.Move(app.Point3dFromXY(0, h / 4));
-                        Element x_stirrup2 = create_closed_stirrup(b, h / 4);
+                        x_stirrup1.Move(app.Point3dFromXY(0, width / 4));
+                        Element x_stirrup2 = create_closed_stirrup(length, width / 4);
                         x_stirrup2.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), Math.PI));
-                        x_stirrup2.Move(app.Point3dFromXY(0, - h / 4 / 2));
+                        x_stirrup2.Move(app.Point3dFromXY(0, - width / 4 / 2));
                         x_stirrups = app.SmartSolid.SolidUnion(x_stirrup1.AsSmartSolidElement, x_stirrup2.AsSmartSolidElement);
                         break;
                     }
                 case 6:
                     {
-                        Element x_stirrup1 = create_closed_stirrup(b, h / 5);
+                        Element x_stirrup1 = create_closed_stirrup(length, width / 5);
                         x_stirrup1.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXY(1, 0), app.Point3dFromXY(-1, 0))));
-                        x_stirrup1.Move(app.Point3dFromXY(0, h / 5));
-                        Element x_stirrup2 = create_closed_stirrup(b, h / 5);
+                        x_stirrup1.Move(app.Point3dFromXY(0, width / 5));
+                        Element x_stirrup2 = create_closed_stirrup(length, width / 5);
                         x_stirrup2.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXY(1, 0), app.Point3dFromXY(-1, 0))));
-                        x_stirrup2.Move(app.Point3dFromXY(0, - h / 5));
+                        x_stirrup2.Move(app.Point3dFromXY(0, - width / 5));
                         x_stirrups = app.SmartSolid.SolidUnion(x_stirrup1.AsSmartSolidElement, x_stirrup2.AsSmartSolidElement);
                         break;
                     }
                 case 7:
                     {
-                        Element x_stirrup1 = create_closed_stirrup(b, h / 6);
+                        Element x_stirrup1 = create_closed_stirrup(length, width / 6);
                         x_stirrup1.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXY(1, 0), app.Point3dFromXY(-1, 0))));
-                        x_stirrup1.Move(app.Point3dFromXY(0, h / 6 * 1.5));
+                        x_stirrup1.Move(app.Point3dFromXY(0, width / 6 * 1.5));
 
-                        Element x_stirrup2 = create_single_stirrup(b);
+                        Element x_stirrup2 = create_single_stirrup(length);
                         x_stirrup2.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXY(0, 1), app.Point3dFromXY(-1, 0))));
                         
-                        Element x_stirrup3 = create_closed_stirrup(b, h / 6);
+                        Element x_stirrup3 = create_closed_stirrup(length, width / 6);
                         x_stirrup3.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXY(1, 0), app.Point3dFromXY(-1, 0))));
-                        x_stirrup3.Move(app.Point3dFromXY(0, - h / 6 * 1.5));
+                        x_stirrup3.Move(app.Point3dFromXY(0, - width / 6 * 1.5));
                         x_stirrups = app.SmartSolid.SolidUnion(x_stirrup1.AsSmartSolidElement, x_stirrup2.AsSmartSolidElement);
                         x_stirrups = app.SmartSolid.SolidUnion(x_stirrups.AsSmartSolidElement, x_stirrup3.AsSmartSolidElement);
                         break;
@@ -182,14 +245,14 @@ namespace Diji_CS.Utils
 
                 case 8:
                     {
-                        Element x_stirrup1 = create_closed_stirrup(b, h / 7);
+                        Element x_stirrup1 = create_closed_stirrup(length, width / 7);
                         x_stirrup1.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXY(1, 0), app.Point3dFromXY(-1, 0))));
-                        x_stirrup1.Move(app.Point3dFromXY(0, b / 7 * 2));
-                        Element x_stirrup2 = create_closed_stirrup(b, h / 7);
+                        x_stirrup1.Move(app.Point3dFromXY(0, length / 7 * 2));
+                        Element x_stirrup2 = create_closed_stirrup(length, width / 7);
                         x_stirrup2.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXY(0, 0), app.Point3dFromXY(1, 0), Math.PI));
-                        Element x_stirrup3 = create_closed_stirrup(b, h / 7);
+                        Element x_stirrup3 = create_closed_stirrup(length, width / 7);
                         x_stirrup3.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXY(1, 0), app.Point3dFromXY(-1, 0))));
-                        x_stirrup3.Move(app.Point3dFromXY(0, - b / 7 * 2));
+                        x_stirrup3.Move(app.Point3dFromXY(0, - length / 7 * 2));
                         x_stirrups = app.SmartSolid.SolidUnion(x_stirrup1.AsSmartSolidElement, x_stirrup2.AsSmartSolidElement);
                         x_stirrups = app.SmartSolid.SolidUnion(x_stirrups.AsSmartSolidElement, x_stirrup3.AsSmartSolidElement);
                         break;
@@ -199,9 +262,9 @@ namespace Diji_CS.Utils
             type2 = app.SmartSolid.SolidUnion(type2.AsSmartSolidElement, x_stirrups.AsSmartSolidElement);
             return type2;
         }
-        public static Element create_stirrup_type2(double b, double h)
+        public static Element create_stirrup_type2(double length, double width)
         {
-            Element single_stirrup = create_closed_stirrup(b, h);
+            Element single_stirrup = create_closed_stirrup(length, width);
             return single_stirrup;
         }
         public static Element create_stirrup_type3(double b, double h)
@@ -216,14 +279,57 @@ namespace Diji_CS.Utils
         {
             return null;
         }
-        public static Element create_stirrup_type6(double d)
+        public static Element create_stirrup_type6(double diameter, double angle_r)
         {
+            //大弧
+            Element element = app.SmartSolid.CreateTorus(null, diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_360 + angle_r * 2);
+            element.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (angle_r + Data.ANGLE_270) / 180 * Math.PI));
+            //右侧弯折直段部分
+            Element right_bending = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, Data.bending_length);
+            right_bending.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            right_bending.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_135 + angle_r) / 180 * Math.PI));
+            right_bending.Move(app.Point3dFromXY((diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
+            right_bending.Move(app.Point3dFromXY((Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI), (Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
+            right_bending.Move(app.Point3dFromXY(-Data.bending_length / 2 * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI), Data.bending_length / 2 * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
 
-            return null;
+            //右侧弯折弧
+            Element right_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_135);
+            right_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_270 + angle_r) / 180 * Math.PI));
+            right_arc.Move(app.Point3dFromXY((diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
+            //左侧弯折弧
+            Element left_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_135);
+            left_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_135 - angle_r) / 180 * Math.PI));
+            left_arc.Move(app.Point3dFromXY(-(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
+
+            //左侧弯折直段部分
+            Element left_bending = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, Data.bending_length);
+            left_bending.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            left_bending.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_45 - angle_r) / 180 * Math.PI));
+            left_bending.Move(app.Point3dFromXY(-(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
+            left_bending.Move(app.Point3dFromXY(-(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI), (Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
+            left_bending.Move(app.Point3dFromXY(Data.bending_length / 2 * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI), Data.bending_length / 2 * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
+
+
+            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, right_bending.AsSmartSolidElement);
+            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, right_arc.AsSmartSolidElement);
+            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, left_arc.AsSmartSolidElement);
+            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, left_bending.AsSmartSolidElement);
+
+            return element;
         }
-        public static Element create_stirrup_type7(double d)
+        public static Element create_stirrup_type7(double length, double xzlength, double diameter, double angle)
         {
-            return null;
+            Element x_stirrup = create_closed_stirrup(length, xzlength, diameter, angle);
+            Element y_stirrup = create_closed_stirrup(length, xzlength, diameter, angle);
+            y_stirrup.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXY(-1, 0), app.Point3dFromXY(0, -1))));
+            Element circle_stirrup = create_circle_stirrup(diameter, angle);
+            Element xz_stirrup = create_closed_stirrup(xzlength, xzlength);
+
+
+            Element ret = app.SmartSolid.SolidUnion(x_stirrup.AsSmartSolidElement, y_stirrup.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, circle_stirrup.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, xz_stirrup.AsSmartSolidElement);
+            return ret;
         }
 
         public static Element create_single_stirrup(double length)
@@ -327,6 +433,107 @@ namespace Diji_CS.Utils
             element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, up_right2.AsSmartSolidElement);
             element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, bending2.AsSmartSolidElement);
             return element;
+        }
+        //两侧为弧的封闭箍筋, diameter表示箍筋直径，angle表示箍筋弧的角度
+        public static Element create_closed_stirrup(double length, double xzlength, double diameter, double angle)
+        {
+            Point3d down_left, down_right, up_left, up_right;
+            up_left = app.Point3dFromXY(-(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle / 2 / Data.ANGLE_180 * Math.PI), (diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle / 2 / Data.ANGLE_180 * Math.PI));
+            up_right = app.Point3dFromXY((diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle / 2 / Data.ANGLE_180 * Math.PI), (diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle / 2 / Data.ANGLE_180 * Math.PI));
+            down_left = app.Point3dFromXY(-(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle / 2 / Data.ANGLE_180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle / 2 / Data.ANGLE_180 * Math.PI));
+            down_right = app.Point3dFromXY((diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle / 2 / Data.ANGLE_180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle / 2 / Data.ANGLE_180 * Math.PI));
+
+            Element down_left_bending = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, Data.bending_length);
+            down_left_bending.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            down_left_bending.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), Data.ANGLE_45 / Data.ANGLE_180 * Math.PI));
+            down_left_bending.Move(down_left);
+            down_left_bending.Move(app.Point3dFromXY(-(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) / Math.Sqrt(2.0), (Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) / Math.Sqrt(2.0)));
+            down_left_bending.Move(app.Point3dFromXY(Data.bending_length / 2 / Math.Sqrt(2.0), Data.bending_length / 2 / Math.Sqrt(2.0)));
+
+            Element down_left_bending1 = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, Data.bending_length);
+            down_left_bending1.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            down_left_bending1.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), Data.ANGLE_45 / Data.ANGLE_180 * Math.PI));
+            down_left_bending1.Move(down_left);
+            down_left_bending1.Move(app.Point3dFromXY((Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) / Math.Sqrt(2.0), -(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) / Math.Sqrt(2.0)));
+            down_left_bending1.Move(app.Point3dFromXY(Data.bending_length / 2 / Math.Sqrt(2.0), Data.bending_length / 2 / Math.Sqrt(2.0)));
+
+            Element down_left_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_135);
+            down_left_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), Data.ANGLE_135/ Data.ANGLE_180 * Math.PI));
+            down_left_arc.Move(down_left);
+
+            Element down_left_arc1 = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, (Data.ANGLE_180 - angle) / 2 + Data.ANGLE_45);
+            down_left_arc1.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), -((Data.ANGLE_180 - angle) / 2 + Data.ANGLE_90) / Data.ANGLE_180 * Math.PI));
+            down_left_arc1.Move(down_left);
+
+            Element down_right_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, (Data.ANGLE_180 - angle) / 2);
+            down_right_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), -Data.ANGLE_90 / Data.ANGLE_180 * Math.PI));
+            down_right_arc.Move(down_right);
+            
+            Element up_left_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, (Data.ANGLE_180 - angle) / 2);
+            up_left_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0,0,1), Data.ANGLE_90 / Data.ANGLE_180 * Math.PI));
+            up_left_arc.Move(up_left);
+            
+            Element up_right_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, (Data.ANGLE_180 - angle) / 2);
+            up_right_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), angle / 2 / Data.ANGLE_180 * Math.PI));
+            up_right_arc.Move(up_right);
+
+            Element up = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, length);
+            up.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            up.Move(app.Point3dFromXY(0, xzlength / 2 + Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2));
+            Element down = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, length);
+            down.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            down.Move(app.Point3dFromXY(0, -(xzlength / 2 + Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2)));
+            Element right = app.SmartSolid.CreateTorus(null, diameter / 2, Data.stirrup_diameter / 2, angle);
+            right.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), - angle / 2 / 180 * Math.PI));
+            Element left = app.SmartSolid.CreateTorus(null, diameter / 2, Data.stirrup_diameter / 2, angle);
+            left.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (- angle / 2 + Data.ANGLE_180) / 180 * Math.PI));
+            Element ret = app.SmartSolid.SolidUnion(up.AsSmartSolidElement, down.AsSmartSolidElement);
+            
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, right.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, left.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, down_left_arc.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, down_left_arc1.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, down_right_arc.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, up_left_arc.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, up_right_arc.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, down_left_bending.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, down_left_bending1.AsSmartSolidElement);
+            return ret;
+        }
+        //外侧圆弧
+        public static Element create_circle_stirrup(double diameter, double angle)
+        {
+            Point3d down_left = app.Point3dFromXY(-(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle / 2 / Data.ANGLE_180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle / 2 / Data.ANGLE_180 * Math.PI));
+
+            Element down_left_bending = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, Data.bending_length);
+            down_left_bending.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            down_left_bending.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), Data.ANGLE_45 / Data.ANGLE_180 * Math.PI));
+            down_left_bending.Move(down_left);
+            down_left_bending.Move(app.Point3dFromXY(-(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) / Math.Sqrt(2.0), (Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) / Math.Sqrt(2.0)));
+            down_left_bending.Move(app.Point3dFromXY(Data.bending_length / 2 / Math.Sqrt(2.0), Data.bending_length / 2 / Math.Sqrt(2.0)));
+
+            Element down_left_bending1 = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, Data.bending_length);
+            down_left_bending1.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            down_left_bending1.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), Data.ANGLE_45 / Data.ANGLE_180 * Math.PI));
+            down_left_bending1.Move(down_left);
+            down_left_bending1.Move(app.Point3dFromXY((Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) / Math.Sqrt(2.0), -(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) / Math.Sqrt(2.0)));
+            down_left_bending1.Move(app.Point3dFromXY(Data.bending_length / 2 / Math.Sqrt(2.0), Data.bending_length / 2 / Math.Sqrt(2.0)));
+
+            Element down_left_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_135);
+            down_left_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), Data.ANGLE_135 / Data.ANGLE_180 * Math.PI));
+            down_left_arc.Move(down_left);
+
+            Element down_left_arc1 = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, (Data.ANGLE_180 - angle) / 2 + Data.ANGLE_45);
+            down_left_arc1.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), -((Data.ANGLE_180 - angle) / 2 + Data.ANGLE_90) / Data.ANGLE_180 * Math.PI));
+            down_left_arc1.Move(down_left);
+
+            Element circle = app.SmartSolid.CreateTorus(null, diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_360);
+
+            Element ret = app.SmartSolid.SolidUnion(down_left_bending.AsSmartSolidElement, down_left_bending1.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, down_left_arc.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, down_left_arc1.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, circle.AsSmartSolidElement);
+            return ret;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Diji_CS
     {
         public static Bentley.Interop.MicroStationDGN.Application app = Utilities.ComApp;
         
-        public static void test(string unparsed)
+        public static void draw(string unparsed)
         {
             app.CommandState.StartDefaultCommand();
             app.CommandState.StartPrimitive(new RCCommand());

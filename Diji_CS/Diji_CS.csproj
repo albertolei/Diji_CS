@@ -86,6 +86,7 @@
     <Compile Include="Utils\FootingSlabBarUtil.cs" />
     <Compile Include="Utils\LongitudinalBarUtil.cs" />
     <Compile Include="Utils\StirrupUtil.cs" />
+    <Compile Include="Utils\TFPartUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="commands.xml">
