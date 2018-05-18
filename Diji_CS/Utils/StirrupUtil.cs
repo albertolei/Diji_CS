@@ -7,6 +7,7 @@ using Bentley.Interop.MicroStationDGN;
 using Bentley.MicroStation.InteropServices;
 using Bentley.Interop.TFCom;
 
+
 namespace Diji_CS.Utils
 {
     class StirrupUtil
@@ -281,40 +282,7 @@ namespace Diji_CS.Utils
         }
         public static Element create_stirrup_type6(double diameter, double angle_r)
         {
-            //大弧
-            Element element = app.SmartSolid.CreateTorus(null, diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_360 + angle_r * 2);
-            element.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (angle_r + Data.ANGLE_270) / 180 * Math.PI));
-            //右侧弯折直段部分
-            Element right_bending = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, Data.bending_length);
-            right_bending.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
-            right_bending.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_135 + angle_r) / 180 * Math.PI));
-            right_bending.Move(app.Point3dFromXY((diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
-            right_bending.Move(app.Point3dFromXY((Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI), (Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
-            right_bending.Move(app.Point3dFromXY(-Data.bending_length / 2 * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI), Data.bending_length / 2 * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
-
-            //右侧弯折弧
-            Element right_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_135);
-            right_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_270 + angle_r) / 180 * Math.PI));
-            right_arc.Move(app.Point3dFromXY((diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
-            //左侧弯折弧
-            Element left_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_135);
-            left_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_135 - angle_r) / 180 * Math.PI));
-            left_arc.Move(app.Point3dFromXY(-(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
-
-            //左侧弯折直段部分
-            Element left_bending = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, Data.bending_length);
-            left_bending.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
-            left_bending.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_45 - angle_r) / 180 * Math.PI));
-            left_bending.Move(app.Point3dFromXY(-(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
-            left_bending.Move(app.Point3dFromXY(-(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI), (Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
-            left_bending.Move(app.Point3dFromXY(Data.bending_length / 2 * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI), Data.bending_length / 2 * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
-
-
-            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, right_bending.AsSmartSolidElement);
-            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, right_arc.AsSmartSolidElement);
-            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, left_arc.AsSmartSolidElement);
-            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, left_bending.AsSmartSolidElement);
-
+            Element element = create_circle_stirrup(diameter, angle_r, 0);
             return element;
         }
         public static Element create_stirrup_type7(double length, double xzlength, double diameter, double angle)
@@ -500,7 +468,45 @@ namespace Diji_CS.Utils
             ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, down_left_bending1.AsSmartSolidElement);
             return ret;
         }
-        //外侧圆弧
+        //类型6外侧圆弧
+        public static Element create_circle_stirrup(double diameter, double angle_r, double rotation)
+        {
+            //大弧
+            Element element = app.SmartSolid.CreateTorus(null, diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_360 + angle_r * 2);
+            element.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (angle_r + Data.ANGLE_270) / 180 * Math.PI));
+            //右侧弯折直段部分
+            Element right_bending = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, Data.bending_length);
+            right_bending.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            right_bending.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_135 + angle_r) / 180 * Math.PI));
+            right_bending.Move(app.Point3dFromXY((diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
+            right_bending.Move(app.Point3dFromXY((Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI), (Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
+            right_bending.Move(app.Point3dFromXY(-Data.bending_length / 2 * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI), Data.bending_length / 2 * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
+
+            //右侧弯折弧
+            Element right_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_135);
+            right_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_270 + angle_r) / 180 * Math.PI));
+            right_arc.Move(app.Point3dFromXY((diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
+            //左侧弯折弧
+            Element left_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_135);
+            left_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_135 - angle_r) / 180 * Math.PI));
+            left_arc.Move(app.Point3dFromXY(-(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
+
+            //左侧弯折直段部分
+            Element left_bending = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, Data.bending_length);
+            left_bending.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            left_bending.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (Data.ANGLE_45 - angle_r) / 180 * Math.PI));
+            left_bending.Move(app.Point3dFromXY(-(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI)));
+            left_bending.Move(app.Point3dFromXY(-(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI), (Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
+            left_bending.Move(app.Point3dFromXY(Data.bending_length / 2 * Math.Cos((Data.ANGLE_45 - angle_r) / 180 * Math.PI), Data.bending_length / 2 * Math.Sin((Data.ANGLE_45 - angle_r) / 180 * Math.PI)));
+
+            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, right_bending.AsSmartSolidElement);
+            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, right_arc.AsSmartSolidElement);
+            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, left_arc.AsSmartSolidElement);
+            element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, left_bending.AsSmartSolidElement);
+            element.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), rotation));
+            return element;
+        }
+        //类型7外侧圆弧
         public static Element create_circle_stirrup(double diameter, double angle)
         {
             Point3d down_left = app.Point3dFromXY(-(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle / 2 / Data.ANGLE_180 * Math.PI), -(diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle / 2 / Data.ANGLE_180 * Math.PI));
