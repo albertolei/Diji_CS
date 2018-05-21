@@ -81,8 +81,6 @@ namespace Diji_CS
             app.ShowPrompt("请选择地基放置的中心点");
         }
 
-
-
         //添加元素
         public void draw_Elements(Element[] elements, string name)
         {
