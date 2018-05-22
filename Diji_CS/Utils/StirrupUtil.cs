@@ -300,6 +300,7 @@ namespace Diji_CS.Utils
             return ret;
         }
 
+        //单肢箍
         public static Element create_single_stirrup(double length)
         {
             //竖直段
@@ -330,6 +331,7 @@ namespace Diji_CS.Utils
             element = app.SmartSolid.SolidUnion(element.AsSmartSolidElement, bending_rebar.AsSmartSolidElement);
             return element;
         }
+        //封闭箍筋
         public static Element create_closed_stirrup(double length, double width)
         {
             Element element = null;
@@ -540,6 +542,28 @@ namespace Diji_CS.Utils
             ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, down_left_arc1.AsSmartSolidElement);
             ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, circle.AsSmartSolidElement);
             return ret;
+        }
+        
+        //螺旋箍筋
+        public static Element create_spiral_stirrup(double length, double diameter, double top_densified, double top_spacing, double bottom_densified, double bottom_spacing, double spacing)
+        {
+            Element path = null;
+
+            Element top_horizontal = app.CreateArcElement1(null, app.Point3dFromXY(-diameter / 2, 0), app.Point3dZero(), app.Point3dFromXY(diameter / 2, 0));
+
+            double radius0 = diameter / 2, radius1 = diameter / 2;
+            Segment3d axis = new Segment3d();
+            axis.StartPoint = app.Point3dZero();
+            axis.EndPoint = app.Point3dFromXYZ(0, 0, length);
+            Point3d startPoint = app.Point3dFromXYZ(1, 0, 0);
+            BsplineCurve bspCurve = new BsplineCurveClass();
+            bspCurve.Helix(radius0, radius1, startPoint, axis, top_spacing, false);
+            path = app.CreateBsplineCurveElement1(null, bspCurve);
+
+            app.ActiveModelReference.AddElement(top_horizontal);
+            app.ActiveModelReference.AddElement(path);
+
+            return null;
         }
     }
 }

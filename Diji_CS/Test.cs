@@ -117,16 +117,35 @@ namespace Diji_CS
             //BsplineCurveElement bspelement = app.CreateBsplineCurveElement1(null, bsp);
             //app.ActiveModelReference.AddElement(bspelement);
 
-            Element element = null;
-            double radius0 = 1.0, radius1 = 1.0;
+            Point3d center = app.Point3dZero();
+            Matrix3d rotation = app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0));
+            Element top_horizontal = app.CreateArcElement2(null, ref center, 100.0, 100.0, ref rotation, 0, 540 / Data.ANGLE_180 * Math.PI);
+            top_horizontal.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dZero(), app.Point3dFromXYZ(0, 1, 0), Math.PI / 2));
+
+            Element bottom_horizontal = app.CreateArcElement2(null, ref center, 100.0, 100.0, ref rotation, 0, 540 / Data.ANGLE_180 * Math.PI);
+            bottom_horizontal.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dZero(), app.Point3dFromXYZ(0, 1, 0), Math.PI / 2));
+
+            Element path = null;
+            double radius0 = 100.0, radius1 = 100.0;
             Segment3d axis = new Segment3d();
             axis.StartPoint = app.Point3dZero();
-            axis.EndPoint = app.Point3dOne();
-            Point3d startPoint = app.Point3dCrossProduct(app.Point3dFromXYZ(0, 0, 1), app.Point3dSubtract(axis.StartPoint, axis.EndPoint));
+            axis.EndPoint = app.Point3dFromXYZ(0, 0, 100);
+            top_horizontal.Move(axis.EndPoint);
+            
+            ////Point3d startPoint = app.Point3dCrossProduct(app.Point3dFromXYZ(0, 0, 1), app.Point3dSubtract(axis.StartPoint, axis.EndPoint));
+            Point3d startPoint = app.Point3dFromXYZ(1, 0, 0);
             BsplineCurve bspCurve = new BsplineCurveClass();
             bspCurve.Helix(radius0, radius1, startPoint, axis, 5.0, true);
-            element = app.CreateBsplineCurveElement1(null, bspCurve);
-            app.ActiveModelReference.AddElement(element);
+            path = app.CreateBsplineCurveElement1(null, bspCurve);
+
+            Element circle = app.CreateEllipseElement2(null, app.Point3dFromXYZ(100, 0, 0), 5.0, 5.0, app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(0, 1, 0)));
+            Element stirrup = app.SmartSolid.SweepProfileAlongPath(circle, path);
+
+            app.ActiveModelReference.AddElement(top_horizontal);
+            app.ActiveModelReference.AddElement(bottom_horizontal);
+            app.ActiveModelReference.AddElement(path);
+            //app.ActiveModelReference.AddElement(circle);
+            app.ActiveModelReference.AddElement(stirrup);
         }
 
         //public static void sayHello(string unparsed)
