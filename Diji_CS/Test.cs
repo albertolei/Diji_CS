@@ -111,40 +111,50 @@ namespace Diji_CS
             //app.ActiveModelReference.AddElement(result);
 
             //BsplineCurve bsp = new BsplineCurveClass();
-            //Segment3d axis = app.Segment3dFromXYZXYZStartEnd(0,0,0,0,0,2000);
+            //Segment3d axis = app.Segment3dFromXYZXYZStartEnd(0, 0, 0, 0, 0, 2000);
             //Point3d startPoint = app.Point3dZero();
             //bsp.Helix(100, 100, ref startPoint, ref axis, 0);
             //BsplineCurveElement bspelement = app.CreateBsplineCurveElement1(null, bsp);
             //app.ActiveModelReference.AddElement(bspelement);
 
-            Point3d center = app.Point3dZero();
-            Matrix3d rotation = app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0));
-            Element top_horizontal = app.CreateArcElement2(null, ref center, 100.0, 100.0, ref rotation, 0, 540 / Data.ANGLE_180 * Math.PI);
-            top_horizontal.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dZero(), app.Point3dFromXYZ(0, 1, 0), Math.PI / 2));
+            //Point3d center = app.Point3dZero();
+            //Matrix3d rotation = app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0));
+            //Element top_horizontal = app.CreateArcElement2(null, ref center, 100.0, 100.0, ref rotation, 0, 540 / Data.ANGLE_180 * Math.PI);
+            //top_horizontal.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dZero(), app.Point3dFromXYZ(0, 1, 0), Math.PI / 2));
 
-            Element bottom_horizontal = app.CreateArcElement2(null, ref center, 100.0, 100.0, ref rotation, 0, 540 / Data.ANGLE_180 * Math.PI);
-            bottom_horizontal.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dZero(), app.Point3dFromXYZ(0, 1, 0), Math.PI / 2));
+            //Element bottom_horizontal = app.CreateArcElement2(null, ref center, 100.0, 100.0, ref rotation, 0, 540 / Data.ANGLE_180 * Math.PI);
+            //bottom_horizontal.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dZero(), app.Point3dFromXYZ(0, 1, 0), Math.PI / 2));
 
-            Element path = null;
-            double radius0 = 100.0, radius1 = 100.0;
-            Segment3d axis = new Segment3d();
-            axis.StartPoint = app.Point3dZero();
-            axis.EndPoint = app.Point3dFromXYZ(0, 0, 100);
-            top_horizontal.Move(axis.EndPoint);
-            
-            ////Point3d startPoint = app.Point3dCrossProduct(app.Point3dFromXYZ(0, 0, 1), app.Point3dSubtract(axis.StartPoint, axis.EndPoint));
-            Point3d startPoint = app.Point3dFromXYZ(1, 0, 0);
-            BsplineCurve bspCurve = new BsplineCurveClass();
-            bspCurve.Helix(radius0, radius1, startPoint, axis, 5.0, true);
-            path = app.CreateBsplineCurveElement1(null, bspCurve);
+            //Element path = null;
+            //double radius0 = 100.0, radius1 = 100.0;
+            //Segment3d axis = new Segment3d();
+            //axis.StartPoint = app.Point3dZero();
+            //axis.EndPoint = app.Point3dFromXYZ(0, 0, 1000);
+            //top_horizontal.Move(axis.EndPoint);
 
-            Element circle = app.CreateEllipseElement2(null, app.Point3dFromXYZ(100, 0, 0), 5.0, 5.0, app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(0, 1, 0)));
-            Element stirrup = app.SmartSolid.SweepProfileAlongPath(circle, path);
+            //Point3d startPoint = app.Point3dFromXYZ(1, 0, 0);
+            //BsplineCurve bspCurve = new BsplineCurveClass();
+            //bspCurve.Helix(radius0, radius1, startPoint, axis, 5.0, true);
+            //path = app.CreateBsplineCurveElement1(null, bspCurve);
 
-            app.ActiveModelReference.AddElement(top_horizontal);
-            app.ActiveModelReference.AddElement(bottom_horizontal);
-            app.ActiveModelReference.AddElement(path);
+            //Element circle = app.CreateEllipseElement2(null, app.Point3dFromXYZ(100, 0, 0), 5.0, 5.0, app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(0, 1, 0)));
+            //Element spiral_stirrup = app.SmartSolid.SweepProfileAlongPath(circle, path);
+
+
+            //Element bottom_stirrup = app.SmartSolid.CreateTorus(null, 100, 5, 540);
+            //Element top_stirrup = app.SmartSolid.CreateTorus(null, 100, 5, 540);
+            //top_stirrup.Move(axis.EndPoint);
+            //Element bottom_stirrup = app.SmartSolid.SweepProfileAlongPath(circle, bottom_horizontal);
+            //app.ActiveModelReference.AddElement(top_horizontal);
+            //app.ActiveModelReference.AddElement(bottom_horizontal);
+            //app.ActiveModelReference.AddElement(path);
             //app.ActiveModelReference.AddElement(circle);
+            //Element stirrup = app.SmartSolid.SolidUnion(spiral_stirrup.AsSmartSolidElement, bottom_stirrup.AsSmartSolidElement);
+            //stirrup = app.SmartSolid.SolidUnion(stirrup.AsSmartSolidElement, top_stirrup.AsSmartSolidElement);
+            //app.ActiveModelReference.AddElement(stirrup);
+            //app.ActiveModelReference.AddElement(spiral_stirrup);
+            //app.ActiveModelReference.AddElement(bottom_stirrup);
+            Element stirrup = StirrupUtil.create_spiral_stirrup(1400.0, 200.0, 200.0, 100.0, 400.0, 100.0, 200.0);
             app.ActiveModelReference.AddElement(stirrup);
         }
 

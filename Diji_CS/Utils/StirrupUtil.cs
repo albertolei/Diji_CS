@@ -547,23 +547,66 @@ namespace Diji_CS.Utils
         //螺旋箍筋
         public static Element create_spiral_stirrup(double length, double diameter, double top_densified, double top_spacing, double bottom_densified, double bottom_spacing, double spacing)
         {
-            Element path = null;
+            double top_num = Math.Ceiling(top_densified / top_spacing);
+            top_spacing = top_densified / top_num;
+            double bottom_num = Math.Ceiling(bottom_densified / bottom_spacing);
+            bottom_spacing = bottom_densified / bottom_num;
+            double middle_num = Math.Ceiling((length - top_densified - bottom_densified) / spacing);
+            spacing = (length - top_densified - bottom_densified) / middle_num;
 
-            Element top_horizontal = app.CreateArcElement1(null, app.Point3dFromXY(-diameter / 2, 0), app.Point3dZero(), app.Point3dFromXY(diameter / 2, 0));
-
+            //螺旋部分（下部加密区）
+            ChainableElement[] oStringElements = new ChainableElement[3];
+            BsplineCurveElement path = null;
             double radius0 = diameter / 2, radius1 = diameter / 2;
             Segment3d axis = new Segment3d();
             axis.StartPoint = app.Point3dZero();
-            axis.EndPoint = app.Point3dFromXYZ(0, 0, length);
+            axis.EndPoint = app.Point3dFromXYZ(0, 0, bottom_densified);
             Point3d startPoint = app.Point3dFromXYZ(1, 0, 0);
             BsplineCurve bspCurve = new BsplineCurveClass();
-            bspCurve.Helix(radius0, radius1, startPoint, axis, top_spacing, false);
+            bspCurve.Helix(radius0, radius1, ref startPoint, ref axis, bottom_spacing);
             path = app.CreateBsplineCurveElement1(null, bspCurve);
+            oStringElements[0] = path;
+            
+            //螺旋部分（中部非加密区）
+            axis.StartPoint = axis.EndPoint;
+            axis.EndPoint = app.Point3dFromXYZ(0, 0, length - top_densified);
+            startPoint = app.Point3dFromXYZ(1, 0, axis.StartPoint.Z);
+            bspCurve = new BsplineCurveClass();
+            bspCurve.Helix(radius0, radius1, ref startPoint, ref axis, spacing);
+            path = app.CreateBsplineCurveElement1(null, bspCurve);
+            oStringElements[1] = path;
 
-            app.ActiveModelReference.AddElement(top_horizontal);
-            app.ActiveModelReference.AddElement(path);
+            //螺旋部分（上部加密区）
+            axis.StartPoint = axis.EndPoint;
+            axis.EndPoint = app.Point3dFromXYZ(0, 0, length);
+            startPoint = app.Point3dFromXYZ(1, 0, axis.StartPoint.Z);
+            bspCurve = new BsplineCurveClass();
+            bspCurve.Helix(radius0, radius1, ref startPoint, ref axis, top_spacing);
+            path = app.CreateBsplineCurveElement1(null, bspCurve);
+            oStringElements[2] = path;
+            ComplexStringElement oComplexString = app.CreateComplexStringElement1(oStringElements);
+            app.ActiveModelReference.AddElement(oComplexString);
 
-            return null;
+            Element circle = app.CreateEllipseElement2(null, app.Point3dFromXYZ(diameter / 2, 0, 0), Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(0, 1, 0)));
+            double r = Math.Atan(bottom_spacing / (Math.PI * diameter));
+            circle.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dZero(), app.Point3dFromXYZ(1, 0, 0), r);
+            app.ActiveModelReference.AddElement(circle);
+
+            Element spiral_stirrup = app.SmartSolid.SweepProfileAlongPath(circle, oComplexString);
+
+            //上部水平直段
+            Point3d center = app.Point3dZero();
+            Matrix3d rotation = app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0));
+            Element top_stirrup = app.SmartSolid.CreateTorus(null, diameter / 2, Data.stirrup_diameter / 2, 540);
+            top_stirrup.Move(app.Point3dFromXYZ(0, 0, length));
+
+            //下部水平直段
+            Element bottom_stirrup = app.SmartSolid.CreateTorus(null, diameter / 2, Data.stirrup_diameter / 2, 540);
+            
+            //合并
+            Element ret = app.SmartSolid.SolidUnion(spiral_stirrup.AsSmartSolidElement, top_stirrup.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, bottom_stirrup.AsSmartSolidElement);
+            return ret;
         }
     }
 }
