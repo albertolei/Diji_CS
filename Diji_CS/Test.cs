@@ -154,8 +154,9 @@ namespace Diji_CS
             //app.ActiveModelReference.AddElement(stirrup);
             //app.ActiveModelReference.AddElement(spiral_stirrup);
             //app.ActiveModelReference.AddElement(bottom_stirrup);
-            Element stirrup = StirrupUtil.create_spiral_stirrup(1400.0, 200.0, 200.0, 100.0, 400.0, 100.0, 200.0);
-            app.ActiveModelReference.AddElement(stirrup);
+            //Element stirrup = StirrupUtil.create_spiral_stirrup(1200.0, 200.0, 200.0, 100.0, 400.0, 100.0, 200.0);
+            Element stirrup = StirrupUtil.create_octagon_stirrup(1500, 1500, 500, 400);
+            //app.ActiveModelReference.AddElement(stirrup);
         }
 
         //public static void sayHello(string unparsed)
