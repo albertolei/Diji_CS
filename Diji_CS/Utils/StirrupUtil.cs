@@ -573,26 +573,127 @@ namespace Diji_CS.Utils
         //类型3内部箍筋
         public static Element create_octagon_stirrup(double length, double width, double inner_length, double inner_width)
         {
-            double angle_r = Math.Atan((length - inner_length) / (width - inner_width));
-            Point3d inner_down_left = app.Point3dFromXY(-(length - inner_length) / 2, width / 2);
-            Point3d inner_down_right = app.Point3dFromXY((length - inner_length) / 2, width / 2);
-            Point3d inner_left_down = app.Point3dFromXY(-length / 2, -(width - inner_width) / 2);
-            Point3d inner_left_up = app.Point3dFromXY(- length / 2, (width - inner_width) / 2);
-            Point3d inner_up_left = app.Point3dFromXY(-(length - inner_length) / 2, width / 2);
-            Point3d inner_up_right = app.Point3dFromXY((length - inner_width) / 2, width / 2);
-            Point3d inner_right_up = app.Point3dFromXY(length / 2, (width - inner_width) / 2);
-            Point3d inner_right_down = app.Point3dFromXY(length / 2, -(width - inner_width) / 2);
+            double angle_r = Math.Atan((length - inner_length) / (width - inner_width)) / Math.PI * Data.ANGLE_180;
+            Point3d inner_down_left = app.Point3dFromXY(- inner_length/ 2, - width / 2);
+            Point3d inner_down_right = app.Point3dFromXY(inner_length / 2, - width / 2);
+            Point3d inner_left_down = app.Point3dFromXY(-length / 2, -inner_width / 2);
+            Point3d inner_left_up = app.Point3dFromXY(- length / 2, inner_width / 2);
+            Point3d inner_up_left = app.Point3dFromXY(-inner_length / 2, width / 2);
+            Point3d inner_up_right = app.Point3dFromXY(inner_length / 2, width / 2);
+            Point3d inner_right_up = app.Point3dFromXY(length / 2, inner_width / 2);
+            Point3d inner_right_down = app.Point3dFromXY(length / 2, -inner_width / 2);
 
             //测试纵筋
             Element lon = app.SmartSolid.CreateCylinder(null, Data.longitudinal_rebar_diameter / 2, 1000);
             lon.Move(inner_down_left);
             app.ActiveModelReference.AddElement(lon);
+            lon = app.SmartSolid.CreateCylinder(null, Data.longitudinal_rebar_diameter / 2, 1000);
+            lon.Move(inner_down_right);
+            app.ActiveModelReference.AddElement(lon);
+            lon = app.SmartSolid.CreateCylinder(null, Data.longitudinal_rebar_diameter / 2, 1000);
+            lon.Move(inner_left_down);
+            app.ActiveModelReference.AddElement(lon);
+            lon = app.SmartSolid.CreateCylinder(null, Data.longitudinal_rebar_diameter / 2, 1000);
+            lon.Move(inner_left_up);
+            app.ActiveModelReference.AddElement(lon);
+            lon = app.SmartSolid.CreateCylinder(null, Data.longitudinal_rebar_diameter / 2, 1000);
+            lon.Move(inner_up_left);
+            app.ActiveModelReference.AddElement(lon);
+            lon = app.SmartSolid.CreateCylinder(null, Data.longitudinal_rebar_diameter / 2, 1000);
+            lon.Move(inner_up_right);
+            app.ActiveModelReference.AddElement(lon);
+            lon = app.SmartSolid.CreateCylinder(null, Data.longitudinal_rebar_diameter / 2, 1000);
+            lon.Move(inner_right_up);
+            app.ActiveModelReference.AddElement(lon);
+            lon = app.SmartSolid.CreateCylinder(null, Data.longitudinal_rebar_diameter / 2, 1000);
+            lon.Move(inner_right_down);
+            app.ActiveModelReference.AddElement(lon);
+
             //down left弯折直段钢筋
             Element bending = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, Data.bending_length);
             bending.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 1, 0))));
             bending.Move(inner_down_left);
             bending.Move(app.Point3dFromXY((Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) / Math.Sqrt(2.0), -(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) / Math.Sqrt(2.0)));
+            bending.Move(app.Point3dFromXY(Data.bending_length / 2 / Math.Sqrt(2.0), Data.bending_length/ 2 / Math.Sqrt(2.0)));
             app.ActiveModelReference.AddElement(bending);
+            //down left弧
+            Element down_left_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_45 + Data.ANGLE_90 - angle_r);
+            down_left_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), -(Data.ANGLE_45 + Data.ANGLE_90 - angle_r + Data.ANGLE_45) / Data.ANGLE_180 * Math.PI));
+            down_left_arc.Move(inner_down_left);
+            app.ActiveModelReference.AddElement(down_left_arc);
+            //左下角直段钢筋
+            double l = Math.Sqrt(Math.Pow((length - inner_length) / 2, 2) + Math.Pow((width - inner_width) / 2, 2));
+            Element down_left = app.SmartSolid.CreateCylinder(null,Data.stirrup_diameter / 2, l);
+            down_left.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            down_left.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), -(90 - angle_r) / Data.ANGLE_180 * Math.PI));
+            down_left.Move(app.Point3dFromXY((inner_down_left.X + inner_left_down.X) / 2, (inner_down_left.Y + inner_left_down.Y) / 2));
+            down_left.Move(app.Point3dFromXY(-(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Cos(angle_r / Data.ANGLE_180 * Math.PI), -(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Sin(angle_r / Data.ANGLE_180 * Math.PI)));
+            app.ActiveModelReference.AddElement(down_left);
+            //left down弧
+            Element left_down_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, angle_r);
+            left_down_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), Math.PI));
+            left_down_arc.Move(inner_left_down);
+            app.ActiveModelReference.AddElement(left_down_arc);
+            //左侧直段
+            Element left = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, inner_width);
+            left.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(0, 1, 0))));
+            left.Move(app.Point3dFromXY(-(length / 2 + Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2), 0));
+            app.ActiveModelReference.AddElement(left);
+            //left up弧
+            Element left_up_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, angle_r);
+            left_up_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), Math.PI - angle_r / Data.ANGLE_180 * Math.PI));
+            left_up_arc.Move(inner_left_up);
+            app.ActiveModelReference.AddElement(left_up_arc);
+            //左上角直段钢筋
+            Element up_left = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, l);
+            up_left.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            up_left.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (90 - angle_r) / Data.ANGLE_180 * Math.PI));
+            up_left.Move(app.Point3dFromXY((inner_up_left.X + inner_left_up.X) / 2, (inner_up_left.Y + inner_left_up.Y) / 2));
+            up_left.Move(app.Point3dFromXY(-(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Cos(angle_r / Data.ANGLE_180 * Math.PI), (Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Sin(angle_r / Data.ANGLE_180 * Math.PI)));
+            app.ActiveModelReference.AddElement(up_left);
+            //up left弧
+            Element up_left_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_90 - angle_r);
+            up_left_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), Math.PI / 2));
+            up_left_arc.Move(inner_up_left);
+            app.ActiveModelReference.AddElement(up_left_arc);
+            //上部直段钢筋
+            Element up = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, inner_length);
+            up.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            up.Move(app.Point3dFromXY(0, width / 2 + Data.longitudinal_rebar_diameter / 2+ Data.stirrup_diameter / 2));
+            app.ActiveModelReference.AddElement(up);
+            //up right弧
+            Element up_right_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, Data.ANGLE_90 - angle_r);
+            up_right_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), angle_r / Data.ANGLE_180 * Math.PI));
+            up_right_arc.Move(inner_up_right);
+            app.ActiveModelReference.AddElement(up_right_arc);
+            //右上角直段钢筋
+            Element up_right = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, l);
+            up_right.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            up_right.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), -(90 - angle_r) / Data.ANGLE_180 * Math.PI));
+            up_right.Move(app.Point3dFromXY((inner_up_right.X + inner_right_up.X) / 2, (inner_up_right.Y + inner_right_up.Y) / 2));
+            up_right.Move(app.Point3dFromXY((Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Cos(angle_r / Data.ANGLE_180 * Math.PI), (Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Sin(angle_r / Data.ANGLE_180 * Math.PI)));
+            app.ActiveModelReference.AddElement(up_right);
+            //right up弧
+            Element right_up_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, angle_r);
+            right_up_arc.Move(inner_right_up);
+            app.ActiveModelReference.AddElement(right_up_arc);
+            //右侧直段
+            Element right = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, inner_width);
+            right.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(0, 1, 0))));
+            right.Move(app.Point3dFromXY(length / 2 + Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, 0));
+            app.ActiveModelReference.AddElement(right);
+            //right down弧
+            Element right_down_arc = app.SmartSolid.CreateTorus(null, Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2, Data.stirrup_diameter / 2, angle_r);
+            right_down_arc.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), -angle_r / Data.ANGLE_180 * Math.PI));
+            right_down_arc.Move(inner_right_down);
+            app.ActiveModelReference.AddElement(right_down_arc);
+            //右下角直段钢筋
+            Element down_right = app.SmartSolid.CreateCylinder(null, Data.stirrup_diameter / 2, l);
+            down_right.Transform(app.Transform3dFromMatrix3d(app.Matrix3dFromRotationBetweenVectors(app.Point3dFromXYZ(0, 0, 1), app.Point3dFromXYZ(1, 0, 0))));
+            down_right.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), (90 - angle_r) / Data.ANGLE_180 * Math.PI));
+            down_right.Move(app.Point3dFromXY((inner_down_right.X + inner_right_down.X) / 2, (inner_down_right.Y + inner_right_down.Y) / 2));
+            down_right.Move(app.Point3dFromXY((Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Cos(angle_r / Data.ANGLE_180 * Math.PI), -(Data.longitudinal_rebar_diameter / 2 + Data.stirrup_diameter / 2) * Math.Sin(angle_r / Data.ANGLE_180 * Math.PI)));
+            app.ActiveModelReference.AddElement(down_right);
 
             return null;
         }
