@@ -1,6 +1,6 @@
 D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\mdlapps\Diji_CS.dll.config
 D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\mdlapps\Diji_CS.dll
 D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\mdlapps\Diji_CS.pdb
-F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.csprojResolveAssemblyReference.cache
 F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.dll
 F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.pdb
+F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.csprojResolveAssemblyReference.cache

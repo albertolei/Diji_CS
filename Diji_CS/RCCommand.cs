@@ -22,11 +22,11 @@ namespace Diji_CS
         public void DataPoint(ref Point3d Point, View View)
         {
             Element column, foundation, foundation_rebars, column_longitudinal_rebars, column_stirrups;
-            column = RCUtil.create_column(800, 1500, 400);
+            column = RCUtil.create_column(800, 800, 1500, 400);
             foundation = RCUtil.create_foundation(1500, 1500, 400);
 
-            column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(800, 1500, 1500, 1500, 400, 50, "6");
-            column_stirrups = StirrupUtil.create_column_stirrups(800, 1500, 400, "6");
+            column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(800, 800, 1500, 1500, 1500, 400, 50, "5");
+            column_stirrups = StirrupUtil.create_column_stirrups(800, 800, 1500, 400, "5");
             foundation_rebars = FootingSlabBarUtil.create_foundation_rebars(1500, 1500, 400);
 
             TFPartRef tfpart_ref = TFPartUtil.create_tfpart_ref("Ceiling", "Metal");
@@ -54,8 +54,8 @@ namespace Diji_CS
         public void Dynamics(ref Point3d Point, View View, MsdDrawingMode DrawMode)
         {
             //动态移动的时候不显示配筋，只有点击的时候才画配筋
-            //Element column = RCUtil.create_column(800, 800, 1500, 400), foundation = RCUtil.create_foundation(1500, 1500, 400);
-            Element column = RCUtil.create_column(800, 1500, 400), foundation = RCUtil.create_foundation(1500, 1500, 400);
+            Element column = RCUtil.create_column(800, 800, 1500, 400), foundation = RCUtil.create_foundation(1500, 1500, 400);
+            //Element column = RCUtil.create_column(800, 1500, 400), foundation = RCUtil.create_foundation(1500, 1500, 400);
             column.Move(ref Point);
             foundation.Move(ref Point);
 

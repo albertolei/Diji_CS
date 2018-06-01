@@ -25,6 +25,24 @@ namespace Diji_CS.Utils
                 case "2":
                     column_longitudinal_rebars = create_longitudinal_bar_type2(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length);
                     break;
+                case "4":
+                    column_longitudinal_rebars = create_longitudinal_bar_type4(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length);
+                    break;
+                case "5":
+                    column_longitudinal_rebars = create_longitudinal_bar_type5(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length, 4, 4);
+                    break;
+            }
+            return column_longitudinal_rebars;
+        }
+        //画柱纵筋类型4, 参数分别为柱子的长、宽、高，基础的长、宽、高，弯折长度，箍筋类型
+        public static Element create_column_longitudinal_rebars(double column_length, double column_width, double column_height, double inner_length, double inner_width, double foundation_length, double foundation_width, double foundation_height, double bending_length, string type)
+        {
+            Element column_longitudinal_rebars = null;
+            switch (type)
+            {
+                case "3":
+                    column_longitudinal_rebars = create_longitudinal_bar_type3(column_length, column_width, column_height, inner_length, inner_width, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length);
+                    break;
             }
             return column_longitudinal_rebars;
         }
@@ -458,17 +476,86 @@ namespace Diji_CS.Utils
             ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, down_left_bar.AsSmartSolidElement);
             return ret;
         }
-        public static Element create_longitudinal_bar_type3(double column_length, double column_width, double column_height, double foundation_length, double foundation_width, double foundation_height, double length, double bending_length)
+        public static Element create_longitudinal_bar_type3(double column_length, double column_width, double column_height, double inner_length, double inner_width, double foundation_length, double foundation_width, double foundation_height, double length, double bending_length)
         {
-            return null;
+            Element angle_bar = create_longitudinal_bar_type2(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, length, bending_length);
+            double angle_r = Math.Atan((column_length - inner_length) / (column_width - inner_width)) / Math.PI * Data.ANGLE_180;
+            Point3d inner_down_left = app.Point3dFromXYZ(-inner_length / 2, -(column_width / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2), foundation_height / 2 + column_height - length / 2);
+            Point3d inner_down_right = app.Point3dFromXYZ(inner_length / 2, -(column_width / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2), foundation_height / 2 + column_height - length / 2);
+            Point3d inner_left_down = app.Point3dFromXYZ(-(column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2), -inner_width / 2, foundation_height / 2 + column_height - length / 2);
+            Point3d inner_left_up = app.Point3dFromXYZ(-(column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2), inner_width / 2, foundation_height / 2 + column_height - length / 2);
+            Point3d inner_up_left = app.Point3dFromXYZ(-inner_length / 2, (column_width / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2), foundation_height / 2 + column_height - length / 2);
+            Point3d inner_up_right = app.Point3dFromXYZ(inner_length / 2, (column_width / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2), foundation_height / 2 + column_height - length / 2);
+            Point3d inner_right_up = app.Point3dFromXYZ((column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2), inner_width / 2, foundation_height / 2 + column_height - length / 2);
+            Point3d inner_right_down = app.Point3dFromXYZ((column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2), -inner_width / 2, foundation_height / 2 + column_height - length / 2);
+            
+            Element inner_down_left_bar = create_single_longitudinal_bar(length, bending_length, 0);
+            inner_down_left_bar.Move(inner_down_left);
+            Element inner_down_right_bar = create_single_longitudinal_bar(length, bending_length, 0);
+            inner_down_right_bar.Move(inner_down_right);
+            Element inner_left_down_bar = create_single_longitudinal_bar(length, bending_length, Data.ANGLE_270);
+            inner_left_down_bar.Move(inner_left_down);
+            Element inner_left_up_bar = create_single_longitudinal_bar(length, bending_length, Data.ANGLE_270);
+            inner_left_up_bar.Move(inner_left_up);
+            Element inner_up_left_bar = create_single_longitudinal_bar(length, bending_length, Data.ANGLE_180);
+            inner_up_left_bar.Move(inner_up_left);
+            Element inner_up_right_bar = create_single_longitudinal_bar(length, bending_length, Data.ANGLE_180);
+            inner_up_right_bar.Move(inner_up_right);
+            Element inner_right_up_bar = create_single_longitudinal_bar(length, bending_length, Data.ANGLE_90);
+            inner_right_up_bar.Move(inner_right_up);
+            Element inner_right_down_bar = create_single_longitudinal_bar(length, bending_length, Data.ANGLE_90);
+            inner_right_down_bar.Move(inner_right_down);
+
+            Element ret = null;
+            ret = app.SmartSolid.SolidUnion(angle_bar.AsSmartSolidElement, inner_down_left_bar.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, inner_down_right_bar.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, inner_left_down_bar.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, inner_left_up_bar.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, inner_up_left_bar.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, inner_up_right_bar.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, inner_right_up_bar.AsSmartSolidElement);
+            ret = app.SmartSolid.SolidUnion(ret.AsSmartSolidElement, inner_right_down_bar.AsSmartSolidElement);
+            return ret;
         }
         public static Element create_longitudinal_bar_type4(double column_length, double column_width, double column_height, double foundation_length, double foundation_width, double foundation_height, double length, double bending_length)
         {
-            return null;
+            if (column_length == column_width)
+            {
+                double angle_r = 22.5;
+                Element angle_bar = create_longitudinal_bar_type2(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, length, bending_length);
+                Point3d down_right, down_left;
+                down_right = app.Point3dFromXYZ((column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI), foundation_height / 2 + column_height - length / 2);
+                down_left = app.Point3dFromXYZ(-(column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI), foundation_height / 2 + column_height - length / 2);
+                Element down_right_bar = create_single_longitudinal_bar(length, bending_length, angle_r);
+                Element down_left_bar = create_single_longitudinal_bar(length, bending_length, -angle_r);
+                down_right_bar.Move(down_right);
+                down_left_bar.Move(down_left);
+                Element longitudinal2 = app.SmartSolid.SolidUnion(down_left_bar.AsSmartSolidElement, down_right_bar.AsSmartSolidElement);
+                longitudinal2.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), - Data.ANGLE_45 / Data.ANGLE_180 * Math.PI));
+                Element ret = app.SmartSolid.SolidUnion(angle_bar.AsSmartSolidElement, longitudinal2.AsSmartSolidElement);
+                return ret;
+            }
+            else
+            {
+                return null;
+            }
         }
         public static Element create_longitudinal_bar_type5(double column_length, double column_width, double column_height, double foundation_length, double foundation_width, double foundation_height, double length, double bending_length, int m, int n)
         {
-            return null;
+            Element type1 = create_longitudinal_bar_type1(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, length, bending_length, m, n);
+            double angle_r = 22.5;
+            Element angle_bar = create_longitudinal_bar_type2(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, length, bending_length);
+            Point3d down_right, down_left;
+            down_right = app.Point3dFromXYZ((column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI), foundation_height / 2 + column_height - length / 2);
+            down_left = app.Point3dFromXYZ(-(column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2) * Math.Sin(angle_r / 180 * Math.PI), -(column_length / 2 - Data.protective_layer_thinckness - Data.stirrup_diameter - Data.longitudinal_rebar_diameter / 2) * Math.Cos(angle_r / 180 * Math.PI), foundation_height / 2 + column_height - length / 2);
+            Element down_right_bar = create_single_longitudinal_bar(length, bending_length, angle_r);
+            Element down_left_bar = create_single_longitudinal_bar(length, bending_length, -angle_r);
+            down_right_bar.Move(down_right);
+            down_left_bar.Move(down_left);
+            Element longitudinal2 = app.SmartSolid.SolidUnion(down_left_bar.AsSmartSolidElement, down_right_bar.AsSmartSolidElement);
+            longitudinal2.Transform(app.Transform3dFromLineAndRotationAngle(app.Point3dFromXYZ(0, 0, 0), app.Point3dFromXYZ(0, 0, 1), -Data.ANGLE_45 / Data.ANGLE_180 * Math.PI));
+            Element ret = app.SmartSolid.SolidUnion(type1.AsSmartSolidElement, longitudinal2.AsSmartSolidElement);
+            return ret;
         }
         public static Element create_longitudinal_bar_type6(double column_d, double column_height, double foundation_length, double foundation_width, double foundation_height, double length, double bending_length)
         {
