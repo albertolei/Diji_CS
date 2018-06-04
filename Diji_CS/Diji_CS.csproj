@@ -83,19 +83,48 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
     <Reference Include="ustation">
       <HintPath>D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\ustation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandsList.cs" />
-    <Compile Include="Data.cs" />
+    <Compile Include="Datas\Data.cs" />
+    <Compile Include="Datas\StirrupData\StirrupTypeData1.cs" />
+    <Compile Include="Datas\StirrupData\IStirrupTypeData.cs" />
+    <Compile Include="Datas\StirrupData\StirrupTypeData2.cs" />
+    <Compile Include="Datas\StirrupData\StirrupTypeData3.cs" />
+    <Compile Include="Datas\StirrupData\StirrupTypeData4.cs" />
+    <Compile Include="Datas\StirrupData\StirrupTypeData5.cs" />
+    <Compile Include="Datas\StirrupData\StirrupTypeData6.cs" />
+    <Compile Include="Datas\StirrupData\StirrupTypeData7.cs" />
     <Compile Include="MyAddin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="RCCommand.cs" />
     <Compile Include="RCUtil.cs" />
     <Compile Include="Test.cs" />
+    <Compile Include="UI\StirrupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\StirrupForm.Designer.cs">
+      <DependentUpon>StirrupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\StirrupTypeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\StirrupTypeForm.Designer.cs">
+      <DependentUpon>StirrupTypeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\AnnotationUtil.cs" />
+    <Compile Include="Utils\ControlUtil.cs" />
     <Compile Include="Utils\FootingSlabBarUtil.cs" />
     <Compile Include="Utils\LongitudinalBarUtil.cs" />
     <Compile Include="Utils\StirrupUtil.cs" />
@@ -104,6 +133,16 @@
   <ItemGroup>
     <EmbeddedResource Include="commands.xml">
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\StirrupForm.resx">
+      <DependentUpon>StirrupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\StirrupTypeForm.resx">
+      <DependentUpon>StirrupTypeForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -126,10 +165,13 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="StirrupTypePics\type1.bmp" />
+    <Content Include="StirrupTypePics\type2.bmp" />
+    <Content Include="StirrupTypePics\type6.bmp" />
+    <Content Include="StirrupTypePics\type7.bmp" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

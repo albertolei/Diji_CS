@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Diji_CS;
 using Bentley.Interop.MicroStationDGN;
 using Bentley.MicroStation.InteropServices;
 using Bentley.Interop.TFCom;
 
+using Diji_CS.Datas;
 namespace Diji_CS.Utils
 {
     class LongitudinalBarUtil

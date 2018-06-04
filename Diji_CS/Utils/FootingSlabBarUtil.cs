@@ -7,6 +7,8 @@ using Bentley.Interop.MicroStationDGN;
 using Bentley.Interop.TFCom;
 using Bentley.MicroStation.InteropServices;
 
+using Diji_CS.Datas;
+
 namespace Diji_CS.Utils
 {
     class FootingSlabBarUtil

@@ -7,6 +7,8 @@ using Diji_CS.Utils;
 using Bentley.Interop.MicroStationDGN;
 using Bentley.MicroStation.InteropServices;
 
+using Diji_CS.Datas.StirrupData;
+
 namespace Diji_CS
 {
     class Test
@@ -278,5 +280,11 @@ namespace Diji_CS
         //    //app.ActiveModelReference.AddElement(up_right_second_arc);
         //    app.ActiveModelReference.AddElement(single_stirrup);
         //}
+
+        public static void test()
+        {
+            StirrupTypeData1 std1 = new StirrupTypeData1();
+            std1.Stirrup_type = TYPE.TYPE1;
+        }
     }
 }
