@@ -26,8 +26,13 @@ namespace Diji_CS
             column = RCUtil.create_column(800, 800, 1500, 400);
             foundation = RCUtil.create_foundation(1500, 1500, 400);
 
+<<<<<<< HEAD
             column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(800, 800, 1500, 1500, 1500, 400, 50, "2");
             column_stirrups = StirrupUtil.create_column_stirrups(800, 800, 1500, 400, "2");
+=======
+            column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(800, 800, 1500, 1500, 1500, 400, 50, "5");
+            column_stirrups = StirrupUtil.create_column_stirrups(800, 800, 1500, 400, "5");
+>>>>>>> 697cee66af705187593b39389adb570467c3def8
             foundation_rebars = FootingSlabBarUtil.create_foundation_rebars(1500, 1500, 400);
 
             TFPartRef tfpart_ref = TFPartUtil.create_tfpart_ref("Ceiling", "Metal");
