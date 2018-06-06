@@ -1,12 +1,9 @@
 D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\mdlapps\Diji_CS.dll
 D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\mdlapps\Diji_CS.pdb
-F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.dll
-F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.pdb
-<<<<<<< HEAD
-F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.csproj.GenerateResource.Cache
+F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.csprojResolveAssemblyReference.cache
 F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.Properties.Resources.resources
 F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.UI.StirrupForm.resources
 F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.UI.StirrupTypeForm.resources
-=======
-F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.csprojResolveAssemblyReference.cache
->>>>>>> 697cee66af705187593b39389adb570467c3def8
+F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.csproj.GenerateResource.Cache
+F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.dll
+F:\Workspace\NETProjects\Diji_CS\Diji_CS\obj\Debug\Diji_CS.pdb

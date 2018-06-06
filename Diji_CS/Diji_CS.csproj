@@ -62,24 +62,30 @@
     <Reference Include="Bentley.General.1.0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4bf6c96a266e58d4, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\assemblies\ECFramework\Bentley.General.1.0.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="bentley.interop.microstationdgn">
       <HintPath>D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\assemblies\bentley.interop.microstationdgn.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Bentley.Interop.STFCom">
       <HintPath>D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\assemblies\Bentley.Interop.STFCom.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Bentley.Interop.TFCom">
       <HintPath>D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\assemblies\Bentley.Interop.TFCom.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+      <Private>False</Private>
     </Reference>
     <Reference Include="bentley.microstation">
       <HintPath>D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\assemblies\bentley.microstation.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="bentley.microstation.interfaces.1.0">
       <HintPath>D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\assemblies\bentley.microstation.interfaces.1.0.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -88,6 +94,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="ustation">
       <HintPath>D:\Program Files\Bentley\AECOsimBuildingDesigner V8i Ss6\AECOsimBuildingDesigner\ustation.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +144,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\StirrupForm.resx">
       <DependentUpon>StirrupForm.cs</DependentUpon>

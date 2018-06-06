@@ -9,10 +9,15 @@ namespace Diji_CS.Datas.StirrupData
     {
         public StirrupTypeData1()
         {
- 
+            this.Stirrup_type = TYPE.TYPE1;
+            this.B = 800;
+            this.H = 800;
+            this.M = 4;
+            this.N = 4;
         }
         public StirrupTypeData1(double b, double h, int m, int n)
         {
+            this.Stirrup_type = TYPE.TYPE1;
             this.B = b;
             this.H = h;
             this.M = m;
