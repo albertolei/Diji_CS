@@ -13,6 +13,8 @@ namespace Diji_CS
 {
     class Test
     {
+        private static Bentley.Interop.MicroStationDGN.Application app = Utilities.ComApp;
+
         //柱配筋的保护层厚度，纵筋直径，箍筋直径, 弯折长度
         private static double protective_layer_thinckness = 50, longitudinal_rebar_diameter = 22, stirrup_diameter = 10, stirrup_spacing = 100, bending_length = 75, lae = 300, anchor_bending_rebar_radius = 20;
         //基础配筋的上面和侧面的保护层厚度、下部的保护层厚度、x向钢筋直径、x向钢筋间距、y向钢筋直径、y向钢筋间距
@@ -281,10 +283,21 @@ namespace Diji_CS
         //    app.ActiveModelReference.AddElement(single_stirrup);
         //}
 
-        public static void test()
+        public static void test(string unparsed)
         {
-            StirrupTypeData1 std1 = new StirrupTypeData1();
-            std1.Stirrup_type = TYPE.TYPE1;
+            Element element = app.SmartSolid.CreateSlab(null, 1200, 1000, 800);
+            long elementID = element.ID;
+            DataBlock db = new DataBlockClass();
+            db.Offset = 0;
+            string testDataBlock = "test datablock";
+            db.CopyString(ref testDataBlock, true);
+            element.AddUserAttributeData(10000, db);
+            app.ActiveModelReference.AddElement(element);
+
+            string outstr = "";
+            DataBlock[] dbs = element.GetUserAttributeData(10000);
+            dbs[0].CopyString(ref outstr, false);
+            System.Windows.Forms.MessageBox.Show(outstr);
         }
     }
 }

@@ -16,6 +16,7 @@
     <KeyinTable ID="Commands">
       <Keyword CommandWord="SayHello" />
       <Keyword CommandWord="draw" />
+      <Keyword CommandWord="test" />
     </KeyinTable>
   </SubKeyinTables>
 
@@ -23,5 +24,6 @@
     <!--必须是静态方法-->
     <KeyinHandler Keyin="Diji_CS CommandsList SayHello" Function="Diji_CS.Test.sayHello"/>
     <KeyinHandler Keyin="Diji_CS CommandsList draw" Function="Diji_CS.CommandsList.draw"/>
+    <KeyinHandler Keyin="Diji_CS CommandsList test" Function="Diji_CS.Test.test"/>
   </KeyinHandlers>
 </KeyinTree>
