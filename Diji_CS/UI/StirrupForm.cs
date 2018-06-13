@@ -21,6 +21,7 @@ namespace Diji_CS.UI
         private float stirrup_diameter = 10;              //箍筋直径
 
         private string type = "2";                          //默认类型为2
+
         private float b = 1000, h = 1000, d = 1000;         //参数宽、高、直径
         private object[] m_values = {3, 4}, n_values = {3, 4};
         private int m = 4, n = 4;                           //默认m为4，n为4
@@ -33,6 +34,12 @@ namespace Diji_CS.UI
         private PointF start_point, end_point, left_down, left_up, right_up, right_down;            //箍筋围绕的四根纵筋的圆心;
         private Pen concrete_pen, rebar_pen;       //混凝土线, 钢筋线
 
+
+        public string Type
+        {
+            get { return type; }
+            set { type = value; }
+        }
         public StirrupForm()
         {
             InitializeComponent();
@@ -46,9 +53,7 @@ namespace Diji_CS.UI
         private void init_parameters1_controls()    //第1种箍筋参数
         {
             parambox.Text = "配筋参数1";
-
             parambox.Controls.Clear();
-
             Label label1, label2, label3, label4;
             label1 = ControlUtil.create_label("b：", new Size(23, 12), new Point(10, 25));
             label2 = ControlUtil.create_label("h：", new Size(23, 12), new Point(143, 25));
@@ -56,10 +61,14 @@ namespace Diji_CS.UI
             label4 = ControlUtil.create_label("n：", new Size(23, 12), new Point(143, 55));
             TextBox textbox_b, textbox_h;
             textbox_b = ControlUtil.create_textbox(Convert.ToString(b), new Size(100, 21), new Point(33, 20), new KeyPressEventHandler(textboxb_KeyPress), new EventHandler(textboxb_TextChanged));
+            textbox_b.Name = "textbox_b";
             textbox_h = ControlUtil.create_textbox(Convert.ToString(h), new Size(100, 21), new Point(166, 20), new KeyPressEventHandler(textboxh_KeyPress), new EventHandler(textboxh_TextChanged));
+            textbox_h.Name = "textbox_h";
             ComboBox combobox_m, combobox_n;
             combobox_m = ControlUtil.create_combobox(m_values, m, new Size(100, 20), new Point(33, 51), new EventHandler(comboboxm_SelectedIndexChanged));
+            combobox_m.Name = "combobox_m";
             combobox_n = ControlUtil.create_combobox(n_values, n, new Size(100, 20), new Point(166, 51), new EventHandler(comboboxn_SelectedIndexChanged));
+            combobox_n.Name = "combobox_n";
 
             parambox.Controls.Add(label1);
             parambox.Controls.Add(textbox_b);

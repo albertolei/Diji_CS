@@ -100,14 +100,14 @@
   <ItemGroup>
     <Compile Include="CommandsList.cs" />
     <Compile Include="Datas\Data.cs" />
-    <Compile Include="Datas\StirrupData\StirrupTypeData1.cs" />
-    <Compile Include="Datas\StirrupData\IStirrupTypeData.cs" />
-    <Compile Include="Datas\StirrupData\StirrupTypeData2.cs" />
-    <Compile Include="Datas\StirrupData\StirrupTypeData3.cs" />
-    <Compile Include="Datas\StirrupData\StirrupTypeData4.cs" />
-    <Compile Include="Datas\StirrupData\StirrupTypeData5.cs" />
-    <Compile Include="Datas\StirrupData\StirrupTypeData6.cs" />
-    <Compile Include="Datas\StirrupData\StirrupTypeData7.cs" />
+    <Compile Include="Datas\StirrupData\StirrupData1.cs" />
+    <Compile Include="Datas\StirrupData\IStirrupData.cs" />
+    <Compile Include="Datas\StirrupData\StirrupData2.cs" />
+    <Compile Include="Datas\StirrupData\StirrupData3.cs" />
+    <Compile Include="Datas\StirrupData\StirrupData4.cs" />
+    <Compile Include="Datas\StirrupData\StirrupData5.cs" />
+    <Compile Include="Datas\StirrupData\StirrupData6.cs" />
+    <Compile Include="Datas\StirrupData\StirrupData7.cs" />
     <Compile Include="MyAddin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -5,23 +5,21 @@ using System.Text;
 
 namespace Diji_CS.Datas.StirrupData
 {
-    class StirrupTypeData1 : IStirrupTypeData
+    class StirrupData3 : IStirrupData
     {
-        public StirrupTypeData1()
+        public StirrupData3()
         {
-            this.Stirrup_type = TYPE.TYPE1;
+            this.Stirrup_type = TYPE.TYPE3;
             this.B = 800;
             this.H = 800;
-            this.M = 4;
-            this.N = 4;
         }
-        public StirrupTypeData1(double b, double h, int m, int n)
+        public StirrupData3(double b, double h, double b1, double h1)
         {
-            this.Stirrup_type = TYPE.TYPE1;
+            this.Stirrup_type = TYPE.TYPE3;
             this.B = b;
             this.H = h;
-            this.M = m;
-            this.N = n;
+            this.B1 = b1;
+            this.H1 = h1;
         }
 
         double b;
@@ -30,7 +28,6 @@ namespace Diji_CS.Datas.StirrupData
             get { return b; }
             set { b = value; }
         }
-
         double h;
         public double H
         {
@@ -38,19 +35,19 @@ namespace Diji_CS.Datas.StirrupData
             set { h = value; }
         }
 
-        int m;
-        public int M
+        double b1; //b边上八边形边长
+        public double B1
         {
-            get { return m; }
-            set { m = value; }
+            get { return b1; }
+            set { b1 = value; }
         }
 
-        int n;
-        public int N
+        double h1; //h边上八边形边长
+        public double H1
         {
-            get { return n; }
-            set { n = value; }
+            get { return h1; }
+            set { h1 = value; }
         }
-        
+
     }
 }

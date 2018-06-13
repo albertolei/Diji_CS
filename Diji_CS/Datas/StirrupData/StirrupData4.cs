@@ -6,15 +6,15 @@ using System.Text;
 namespace Diji_CS.Datas.StirrupData
 {
     //圆形箍筋的搭接长度应大于等于laE（受拉钢筋抗震锚固长度）
-    class StirrupTypeData4 : IStirrupTypeData
+    class StirrupData4 : IStirrupData
     {
-        public StirrupTypeData4() 
+        public StirrupData4() 
         {
             this.Stirrup_type = TYPE.TYPE4;
             this.B = 800;
             this.H = 800;
         }
-        public StirrupTypeData4(double b, double h)
+        public StirrupData4(double b, double h)
         {
             this.Stirrup_type = TYPE.TYPE4;
             this.B = b;
