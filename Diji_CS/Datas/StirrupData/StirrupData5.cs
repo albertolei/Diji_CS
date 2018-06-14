@@ -14,11 +14,13 @@ namespace Diji_CS.Datas.StirrupData
             this.H = 800;
             this.B = 800;
         }
-        public StirrupData5(double b, double h)
+        public StirrupData5(double b, double h, int m, int n)
         {
             this.Stirrup_type = TYPE.TYPE5;
             this.B = b;
             this.H = h;
+            this.M = m;
+            this.N = n;
         }
         double b;
         public double B
@@ -33,15 +35,15 @@ namespace Diji_CS.Datas.StirrupData
             set { h = value; }
         }
 
-        double m;
-        public double M
+        int m;
+        public int M
         {
             get { return m; }
             set { m = value; }
         }
 
-        double n;
-        public double N
+        int n;
+        public int N
         {
             get { return n; }
             set { n = value; }

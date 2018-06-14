@@ -734,6 +734,12 @@ namespace Diji_CS.UI
                         init_parameters2_controls();
                         redraw2();
                         break;
+                    case TYPE.TYPE3:
+                        break;
+                    case TYPE.TYPE4:
+                        break;
+                    case TYPE.TYPE5:
+                        break;
                     case TYPE.TYPE6:
                         if (init_parameters6_controls())
                         {

@@ -52,15 +52,32 @@ namespace Diji_CS
                     }
                 case TYPE.TYPE3:
                     {
-
+                        StirrupData3 data = (StirrupData3)stirrupData;
+                        column = RCUtil.create_column(data.B, data.H, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
+                        column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(data.B, data.H, 1500, data.B1, data.H1, 1500, 1500, 400, 50, stf.Type);
+                        column_stirrups = StirrupUtil.create_column_stirrups(data.B, data.H, data.B1,data.H1, 1500, 400, stf.Type);
+                        foundation_rebars = FootingSlabBarUtil.create_foundation_rebars(1500, 1500, 400);
                         break;
                     }
                 case TYPE.TYPE4:
                     {
+                        StirrupData4 data = (StirrupData4)stirrupData;
+                        column = RCUtil.create_column(data.B, data.H, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
+                        column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(data.B, data.H, 1500, 1500, 1500, 400, 50, stf.Type);
+                        column_stirrups = StirrupUtil.create_column_stirrups(data.B, data.H, 1500, 400, stf.Type);
+                        foundation_rebars = FootingSlabBarUtil.create_foundation_rebars(1500, 1500, 400);
                         break;
                     }
                 case TYPE.TYPE5:
                     {
+                        StirrupData5 data = (StirrupData5)stirrupData;
+                        column = RCUtil.create_column(data.B, data.H, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
+                        column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(data.B, data.H, 1500, 1500, 1500, 400, 50, stf.Type, data.M, data.N);
+                        column_stirrups = StirrupUtil.create_column_stirrups(data.B, data.H, 1500, 400, stf.Type, data.M, data.N);
+                        foundation_rebars = FootingSlabBarUtil.create_foundation_rebars(1500, 1500, 400);
                         break;
                     }
                 case TYPE.TYPE6:
@@ -130,15 +147,23 @@ namespace Diji_CS
                     }
                 case TYPE.TYPE3: 
                     {
-                        
+                        StirrupData3 data = (StirrupData3)stirrupData;
+                        column = RCUtil.create_column(data.B, data.H, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
                         break;
                     }
                 case TYPE.TYPE4:
                     {
+                        StirrupData4 data = (StirrupData4)stirrupData;
+                        column = RCUtil.create_column(data.B, data.H, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
                         break;
                     }
                 case TYPE.TYPE5:
                     {
+                        StirrupData5 data = (StirrupData5)stirrupData;
+                        column = RCUtil.create_column(data.B, data.H, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
                         break;
                     }
                 case TYPE.TYPE6:
@@ -231,14 +256,17 @@ namespace Diji_CS
                     }
                 case TYPE.TYPE3:
                     {
+                        stirrup_data = new StirrupData3(550, 550, 200, 100);
                         break;
                     }
                 case TYPE.TYPE4:
                     {
+                        stirrup_data = new StirrupData4(550, 550);
                         break;
                     }
                 case TYPE.TYPE5:
                     {
+                        stirrup_data = new StirrupData5(550, 550, 4, 4);
                         break;
                     }
                 case TYPE.TYPE6:

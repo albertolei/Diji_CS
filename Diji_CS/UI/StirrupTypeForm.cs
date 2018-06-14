@@ -37,6 +37,23 @@ namespace Diji_CS.UI
             this.DialogResult = DialogResult.OK;
         }
 
+        private void panel3_DoubleClick(object sender, EventArgs e)
+        {
+            Type = TYPE.TYPE3;
+            this.DialogResult = DialogResult.OK;
+        }
+        private void panel4_DoubleClick(object sender, EventArgs e)
+        {
+            Type = TYPE.TYPE4;
+            this.DialogResult = DialogResult.OK;
+        }
+
+        private void panel5_DoubleClick(object sender, EventArgs e)
+        {
+            Type = TYPE.TYPE5;
+            this.DialogResult = DialogResult.OK;
+        }
+
         private void panel6_DoubleClick(object sender, EventArgs e)
         {
             Type = TYPE.TYPE6;
@@ -77,5 +94,11 @@ namespace Diji_CS.UI
             panel6.BorderStyle = BorderStyle.FixedSingle;
             panel7.BorderStyle = BorderStyle.Fixed3D;
         }
+
+
+
+
+
+
     }
 }
