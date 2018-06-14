@@ -7,6 +7,7 @@ using Bentley.Interop.MicroStationDGN;
 using Bentley.MicroStation.InteropServices;
 using Bentley.Interop.TFCom;
 using Diji_CS.Datas;
+using Diji_CS.Datas.StirrupData;
 
 namespace Diji_CS.Utils
 {
@@ -14,37 +15,73 @@ namespace Diji_CS.Utils
     {
         private static Bentley.Interop.MicroStationDGN.Application app = Utilities.ComApp;
 
-        //画方柱箍筋，参数分别为柱子的长、宽、高和基础高度、类型
-        public static Element create_column_stirrups(double b, double h, double l, double foundation_height, string type)
+        //画方柱箍筋，参数分别为柱子的长、宽、高和基础高度、类型、x向钢筋肢数、y向钢筋肢数
+        public static Element create_column_stirrups(double b, double h, double l, double foundation_height, TYPE type, int m, int n)
         {
             Element stirrups = null;
 
-            int n = (int)Math.Ceiling((l - Data.stirrup_diameter - 50) / Data.stirrup_spacing) + 1;
-            double real_stirrup_spacing = (l - Data.stirrup_diameter - 50) / (n - 1);
+            int stirrup_num = (int)Math.Ceiling((l - Data.stirrup_diameter - 50) / Data.stirrup_spacing) + 1;
+            double real_stirrup_spacing = (l - Data.stirrup_diameter - 50) / (stirrup_num - 1);
             //double angle_r = Data.lap_length / (Math.PI * b) * Data.ANGLE_360 / 2;
             double angle_r = 22.5;
             //柱箍筋
             Element single_stirrup = null;
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < stirrup_num; i++)
             {
                 switch (type)
                 {
-                    case "1":
-                        single_stirrup = create_stirrup_type1(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, 8, 8);
+                    case TYPE.TYPE1:
+                        single_stirrup = create_stirrup_type1(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, m, n);
                         break;
-                    case "2":
+                    case TYPE.TYPE5:
+                        if (b == h)
+                        {
+                            single_stirrup = create_stirrup_type5(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, angle_r, m, n);
+                        }
+                        break;
+                }
+                single_stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 + Data.stirrup_diameter / 2 + 50 + i * real_stirrup_spacing));
+                if (i == 0)
+                {
+                    stirrups = single_stirrup;
+                }
+                else
+                {
+                    stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, single_stirrup.AsSmartSolidElement);
+                }
+            }
+            //伸入基础箍筋
+            Element stirrup = null;
+            stirrup = StirrupUtil.create_stirrup_type2(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter);
+            stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 - 100));
+            stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, stirrup.AsSmartSolidElement);
+            stirrup = StirrupUtil.create_stirrup_type2(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter);
+            stirrup.Move(app.Point3dFromXYZ(0, 0, -foundation_height / 2 + Data.down_protective_layer_thinckness + Data.x_down_rebar_diameter + Data.y_down_rebar_diameter + 1 + Data.longitudinal_rebar_diameter / 2 + Data.anchor_bending_rebar_radius + Data.longitudinal_rebar_diameter));
+            stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, stirrup.AsSmartSolidElement);
+            return stirrups;
+        }
+        //画方柱箍筋，参数分别为柱子的长、宽、高和基础高度、类型
+        public static Element create_column_stirrups(double b, double h, double l, double foundation_height, TYPE type)
+        {
+            Element stirrups = null;
+
+            int stirrup_num = (int)Math.Ceiling((l - Data.stirrup_diameter - 50) / Data.stirrup_spacing) + 1;
+            double real_stirrup_spacing = (l - Data.stirrup_diameter - 50) / (stirrup_num - 1);
+            //double angle_r = Data.lap_length / (Math.PI * b) * Data.ANGLE_360 / 2;
+            double angle_r = 22.5;
+            //柱箍筋
+            Element single_stirrup = null;
+            for (int i = 0; i < stirrup_num; i++)
+            {
+                switch (type)
+                {
+                    case TYPE.TYPE2:
                         single_stirrup = create_stirrup_type2(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter);
                         break;
-                    case "4":
+                    case TYPE.TYPE4:
                         if (b == h)
                         {
                             single_stirrup = create_stirrup_type4(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, angle_r);
-                        }
-                        break;
-                    case "5":
-                        if (b == h)
-                        {
-                            single_stirrup = create_stirrup_type5(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, angle_r, 4, 4);
                         }
                         break;
                 }
@@ -69,7 +106,7 @@ namespace Diji_CS.Utils
             return stirrups;
         }
         //画类型3方柱箍筋，参数分别为柱子的长、宽，箍筋在b、h边上的长度和基础高度、类型
-        public static Element create_column_stirrups(double b, double h, double b1, double h1, double l, double foundation_height, string type)
+        public static Element create_column_stirrups(double b, double h, double b1, double h1, double l, double foundation_height, TYPE type)
         {
             Element stirrups = null;
 
@@ -81,7 +118,7 @@ namespace Diji_CS.Utils
             {
                 switch (type)
                 {
-                    case "3":
+                    case TYPE.TYPE3:
                         single_stirrup = create_stirrup_type3(b - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, h - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter * 2 - Data.longitudinal_rebar_diameter, b1, h1);
                         break;
                 }
@@ -106,7 +143,7 @@ namespace Diji_CS.Utils
             return stirrups;
         }
         //画圆柱箍筋，参数分别为柱子的直径、高和基础高度、类型
-        public static Element create_column_stirrups(double d, double l, double foundation_height, string type)
+        public static Element create_column_stirrups(double d, double l, double foundation_height, TYPE type)
         {
             Element stirrups = null;
             int n = (int)Math.Ceiling((l - Data.stirrup_diameter - 50) / Data.stirrup_spacing) + 1;
@@ -119,11 +156,11 @@ namespace Diji_CS.Utils
             {
                 switch (type)
                 {
-                    case "6":
+                    case TYPE.TYPE6:
                         angle_r = Data.lap_length / (Math.PI * d) * Data.ANGLE_360 / 2;
                         single_stirrup = create_stirrup_type6(d - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter , angle_r);
                         break;
-                    case "7":
+                    case TYPE.TYPE7:
                         diameter = d - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter;
                         xzlength = d / 3 >= 250 ? d / 3 : 250;
                         angle_r = Math.Acos(xzlength / 2 / (diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2));
@@ -147,14 +184,14 @@ namespace Diji_CS.Utils
             Element stirrup = null;
             switch (type)
             {
-                case "6":
+                case TYPE.TYPE6:
                     stirrup = StirrupUtil.create_stirrup_type6(d - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter, angle_r);
                     stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 - 100));
                     stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, stirrup.AsSmartSolidElement);
                     stirrup = StirrupUtil.create_stirrup_type6(d - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter, angle_r);
                     stirrup.Move(app.Point3dFromXYZ(0, 0, -foundation_height / 2 + Data.down_protective_layer_thinckness + Data.x_down_rebar_diameter + Data.y_down_rebar_diameter + 1 + Data.longitudinal_rebar_diameter / 2 + Data.anchor_bending_rebar_radius + Data.longitudinal_rebar_diameter));
                     break;
-                case "7":
+                case TYPE.TYPE7:
                     stirrup = StirrupUtil.create_stirrup_type7(length, xzlength, diameter, angle);
                     stirrup.Move(app.Point3dFromXYZ(0, 0, foundation_height / 2 - 100));
                     stirrups = app.SmartSolid.SolidUnion(stirrups.AsSmartSolidElement, stirrup.AsSmartSolidElement);

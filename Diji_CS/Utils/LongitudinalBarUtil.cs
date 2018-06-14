@@ -7,56 +7,67 @@ using Bentley.MicroStation.InteropServices;
 using Bentley.Interop.TFCom;
 
 using Diji_CS.Datas;
+using Diji_CS.Datas.StirrupData;
+
 namespace Diji_CS.Utils
 {
     class LongitudinalBarUtil
     {
         private static Bentley.Interop.MicroStationDGN.Application app = Utilities.ComApp;
 
-        //画柱纵筋, 参数分别为柱子的长、宽、高，基础的长、宽、高，弯折长度，箍筋类型
-        public static Element create_column_longitudinal_rebars(double column_length, double column_width, double column_height, double foundation_length, double foundation_width, double foundation_height, double bending_length, string type)
+        //画柱纵筋, 参数分别为柱子的长、宽、高，基础的长、宽、高，弯折长度，箍筋类型，x向箍筋肢数，y向箍筋肢数
+        public static Element create_column_longitudinal_rebars(double column_length, double column_width, double column_height, double foundation_length, double foundation_width, double foundation_height, double bending_length, TYPE type, int m, int n)
         {
             Element column_longitudinal_rebars = null;
             switch (type)
             {
-                case "1":
-                    column_longitudinal_rebars = create_longitudinal_bar_type1(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length, 8, 8);
+                case TYPE.TYPE1:
+                    column_longitudinal_rebars = create_longitudinal_bar_type1(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length, m, n);
                     break;
-                case "2":
-                    column_longitudinal_rebars = create_longitudinal_bar_type2(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length);
-                    break;
-                case "4":
-                    column_longitudinal_rebars = create_longitudinal_bar_type4(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length);
-                    break;
-                case "5":
-                    column_longitudinal_rebars = create_longitudinal_bar_type5(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length, 4, 4);
+                case TYPE.TYPE5:
+                    column_longitudinal_rebars = create_longitudinal_bar_type5(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length, m, n);
                     break;
             }
             return column_longitudinal_rebars;
         }
-        //画柱纵筋类型4, 参数分别为柱子的长、宽、高，基础的长、宽、高，弯折长度，箍筋类型
-        public static Element create_column_longitudinal_rebars(double column_length, double column_width, double column_height, double inner_length, double inner_width, double foundation_length, double foundation_width, double foundation_height, double bending_length, string type)
+        //画柱纵筋, 参数分别为柱子的长、宽、高，基础的长、宽、高，弯折长度，箍筋类型
+        public static Element create_column_longitudinal_rebars(double column_length, double column_width, double column_height, double foundation_length, double foundation_width, double foundation_height, double bending_length, TYPE type)
         {
             Element column_longitudinal_rebars = null;
             switch (type)
             {
-                case "3":
+                case TYPE.TYPE2:
+                    column_longitudinal_rebars = create_longitudinal_bar_type2(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length);
+                    break;
+                case TYPE.TYPE4:
+                    column_longitudinal_rebars = create_longitudinal_bar_type4(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length);
+                    break;
+            }
+            return column_longitudinal_rebars;
+        }
+        //画柱纵筋类型3, 参数分别为柱子的长、宽、高, 柱子八边形箍筋x向边长、y向边长，基础的长、宽、高，弯折长度，箍筋类型
+        public static Element create_column_longitudinal_rebars(double column_length, double column_width, double column_height, double inner_length, double inner_width, double foundation_length, double foundation_width, double foundation_height, double bending_length, TYPE type)
+        {
+            Element column_longitudinal_rebars = null;
+            switch (type)
+            {
+                case TYPE.TYPE3:
                     column_longitudinal_rebars = create_longitudinal_bar_type3(column_length, column_width, column_height, inner_length, inner_width, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length);
                     break;
             }
             return column_longitudinal_rebars;
         }
         //画柱纵筋, 参数分别为柱子的直径、高，基础的长、宽、高，弯折长度，箍筋类型
-        public static Element create_column_longitudinal_rebars(double column_diameter, double column_height, double foundation_length, double foundation_width, double foundation_height, double bending_length, string type)
+        public static Element create_column_longitudinal_rebars(double column_diameter, double column_height, double foundation_length, double foundation_width, double foundation_height, double bending_length, TYPE type)
         {
             Element column_longitudinal_rebars = null;
             double angle_r = 0, diameter = 0, xzlength = 0, length = 0, angle = 0;
             switch (type)
             {
-                case "6":
+                case TYPE.TYPE6:
                     column_longitudinal_rebars = create_longitudinal_bar_type6(column_diameter, column_height, foundation_length, foundation_width, foundation_height, column_height + foundation_height - Data.down_protective_layer_thinckness - Data.x_down_rebar_diameter - Data.y_down_rebar_diameter - 1 - Data.longitudinal_rebar_diameter / 2 - 1, bending_length);
                     break;
-                case "7":
+                case TYPE.TYPE7:
                     diameter = column_diameter - Data.protective_layer_thinckness * 2 - Data.stirrup_diameter;
                     xzlength = column_diameter / 3 >= 250 ? column_diameter / 3 : 250;
                     angle_r = Math.Acos(xzlength / 2 / (diameter / 2 - Data.stirrup_diameter / 2 - Data.longitudinal_rebar_diameter / 2));
@@ -72,7 +83,7 @@ namespace Diji_CS.Utils
             Element angle_bar = create_longitudinal_bar_type2(column_length, column_width, column_height, foundation_length, foundation_width, foundation_height, length, bending_length);
             //m表示y方向上的纵筋
             Element y_longitudinal_bars = null;
-            switch (m)
+            switch (n)
             {
                 case 3:
                     {
@@ -263,7 +274,7 @@ namespace Diji_CS.Utils
             }
             Element x_longitudinal_bars = null;
             //n表示x方向上的纵筋
-            switch (n)
+            switch (m)
             {
                 case 3:
                     {

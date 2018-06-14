@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Diji_CS.Datas.StirrupData
 {
-    enum TYPE {TYPE1, TYPE2, TYPE3, TYPE4, TYPE5, TYPE6, TYPE7 };
+    public enum TYPE {TYPE1, TYPE2, TYPE3, TYPE4, TYPE5, TYPE6, TYPE7 };
     abstract class IStirrupData
     {
         TYPE stirrup_type;

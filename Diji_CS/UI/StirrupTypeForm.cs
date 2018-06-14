@@ -6,12 +6,19 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Diji_CS.Datas.StirrupData;
 
 namespace Diji_CS.UI
 {
     public partial class StirrupTypeForm : Form
     {
-        public string type = "";
+        private TYPE type;
+
+        public TYPE Type
+        {
+            get { return type; }
+            set { type = value; }
+        }
 
         public StirrupTypeForm()
         {
@@ -20,25 +27,25 @@ namespace Diji_CS.UI
 
         private void panel1_DoubleClick(object sender, EventArgs e)
         {
-            type = "1";
+            Type = TYPE.TYPE1;
             this.DialogResult = DialogResult.OK;
         }
 
         private void panel2_DoubleClick(object sender, EventArgs e)
         {
-            type = "2";
+            Type = TYPE.TYPE2;
             this.DialogResult = DialogResult.OK;
         }
 
         private void panel6_DoubleClick(object sender, EventArgs e)
         {
-            type = "6";
+            Type = TYPE.TYPE6;
             this.DialogResult = DialogResult.OK;
         }
 
         private void panel7_DoubleClick(object sender, EventArgs e)
         {
-            type = "7";
+            Type = TYPE.TYPE7;
             this.DialogResult = DialogResult.OK;
         }
 

@@ -159,8 +159,8 @@ namespace Diji_CS
             //app.ActiveModelReference.AddElement(spiral_stirrup);
             //app.ActiveModelReference.AddElement(bottom_stirrup);
             //Element stirrup = StirrupUtil.create_spiral_stirrup(1200.0, 200.0, 200.0, 100.0, 400.0, 100.0, 200.0);
-            Element stirrup = StirrupUtil.create_column_stirrups(800, 800, 1500, 400, "5");
-            Element longitudinal = LongitudinalBarUtil.create_column_longitudinal_rebars(800, 800, 1500, 1500, 1500, 400, 50, "5");
+            Element stirrup = StirrupUtil.create_column_stirrups(800, 800, 1500, 400, TYPE.TYPE5, 4, 4);
+            Element longitudinal = LongitudinalBarUtil.create_column_longitudinal_rebars(800, 800, 1500, 1500, 1500, 400, 50, TYPE.TYPE5, 4, 4);
             app.ActiveModelReference.AddElement(stirrup);
             app.ActiveModelReference.AddElement(longitudinal);
         }

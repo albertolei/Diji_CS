@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Diji_CS.Utils;
+using Diji_CS.Datas.StirrupData;
 
 namespace Diji_CS.UI
 {
@@ -15,14 +16,12 @@ namespace Diji_CS.UI
         private float PADDING = 40;
         private float STIRRUPMUTIPLE = 10;
 
-        private float longitudinal_rebar_diameter = 40;    //纵筋直径
-        private float protective_layer_thinckness = 20;   //保护层厚度
-        private float bending_length = 75;               //弯折长度
-        private float stirrup_diameter = 10;              //箍筋直径
+        private float longitudinal_rebar_diameter = 30;     //纵筋直径
+        private float protective_layer_thinckness = 20;     //保护层厚度
+        private float bending_length = 75;                  //弯折长度
+        private float stirrup_diameter = 10;                //箍筋直径
 
-        private string type = "2";                          //默认类型为2
-
-        private float b = 1000, h = 1000, d = 1000;         //参数宽、高、直径
+        private float b = 550, h = 550, d = 800;         //参数宽、高、直径
         private object[] m_values = {3, 4}, n_values = {3, 4};
         private int m = 4, n = 4;                           //默认m为4，n为4
         private float lap_length = 300;                     //圆形箍筋搭接长度
@@ -35,11 +34,15 @@ namespace Diji_CS.UI
         private Pen concrete_pen, rebar_pen;       //混凝土线, 钢筋线
 
 
-        public string Type
+        private TYPE type = TYPE.TYPE2;
+
+        internal TYPE Type
         {
             get { return type; }
             set { type = value; }
         }
+
+
         public StirrupForm()
         {
             InitializeComponent();
@@ -52,6 +55,7 @@ namespace Diji_CS.UI
 
         private void init_parameters1_controls()    //第1种箍筋参数
         {
+            type = TYPE.TYPE1;
             parambox.Text = "配筋参数1";
             parambox.Controls.Clear();
             Label label1, label2, label3, label4;
@@ -81,17 +85,17 @@ namespace Diji_CS.UI
         }
         private void init_parameters2_controls()    //第2种箍筋参数
         {
+            type = TYPE.TYPE2;
             parambox.Text = "配筋参数2";
-
             parambox.Controls.Clear();
-
             Label label1, label2;
             label1 = ControlUtil.create_label("b：", new Size(23, 12), new Point(10, 25));
             label2 = ControlUtil.create_label("h：", new Size(23, 12), new Point(143, 25));
             TextBox textbox_b, textbox_h;
             textbox_b = ControlUtil.create_textbox(Convert.ToString(b), new Size(100, 21), new Point(33, 20), new KeyPressEventHandler(textboxb_KeyPress), new EventHandler(textboxb_TextChanged));
+            textbox_b.Name = "textbox_b";
             textbox_h = ControlUtil.create_textbox(Convert.ToString(h), new Size(100, 21), new Point(166, 20), new KeyPressEventHandler(textboxh_KeyPress), new EventHandler(textboxh_TextChanged));
-
+            textbox_h.Name = "textbox_h";
             parambox.Controls.Add(label1);
             parambox.Controls.Add(textbox_b);
             parambox.Controls.Add(label2);
@@ -99,30 +103,26 @@ namespace Diji_CS.UI
         }
         private bool init_parameters6_controls()    //第6种箍筋参数
         {
+            type = TYPE.TYPE6;
             parambox.Text = "配筋参数6";
-
             parambox.Controls.Clear();
-
             Label label5 = ControlUtil.create_label("D：", new Size(23, 12), new Point(10, 25));
             TextBox textbox_d = ControlUtil.create_textbox(Convert.ToString(d), new Size(100, 21), new Point(33, 20), new KeyPressEventHandler(textboxd_KeyPress), new EventHandler(textboxd_TextChanged));
-
+            textbox_d.Name = "textbox_d";
             parambox.Controls.Add(label5);
             parambox.Controls.Add(textbox_d);
-
             return check_textbox_d(textbox_d);
         }
         private bool init_parameters7_controls()    //第7种箍筋参数
         {
+            type = TYPE.TYPE7;
             parambox.Text = "配筋参数7";
-
             parambox.Controls.Clear();
-
             Label label5 = ControlUtil.create_label("D：", new Size(23, 12), new Point(10, 25));
             TextBox textbox_d = ControlUtil.create_textbox(Convert.ToString(d), new Size(100, 21), new Point(33, 20), new KeyPressEventHandler(textboxd_KeyPress), new EventHandler(textboxd_TextChanged));
-
+            textbox_d.Name = "textbox_d";
             parambox.Controls.Add(label5);
             parambox.Controls.Add(textbox_d);
-
             return check_textbox_d(textbox_d);
         }
         private void redraw1()      //画第1种箍筋
@@ -723,24 +723,24 @@ namespace Diji_CS.UI
             StirrupTypeForm stirrup_type_form = new StirrupTypeForm();
             if (stirrup_type_form.ShowDialog() == DialogResult.OK)
             {
-                type = stirrup_type_form.type;
+                type = stirrup_type_form.Type;
                 switch (type)
                 {
-                    case "1":
+                    case TYPE.TYPE1:
                         init_parameters1_controls();
                         redraw1();
                         break;
-                    case "2":
+                    case TYPE.TYPE2:
                         init_parameters2_controls();
                         redraw2();
                         break;
-                    case "6":
+                    case TYPE.TYPE6:
                         if (init_parameters6_controls())
                         {
                             redraw6();
                         }
                         break;
-                    case "7":
+                    case TYPE.TYPE7:
                         if (init_parameters7_controls())
                         {
                             redraw7();
@@ -779,10 +779,10 @@ namespace Diji_CS.UI
             }
             switch (type)
             {
-                case "1":
+                case TYPE.TYPE1:
                     redraw1();
                     break;
-                case "2":
+                case TYPE.TYPE2:
                     redraw2();
                     break;
             }
@@ -815,10 +815,10 @@ namespace Diji_CS.UI
             }
             switch (type)
             {
-                case "1":
+                case TYPE.TYPE1:
                     redraw1();
                     break;
-                case "2":
+                case TYPE.TYPE2:
                     redraw2();
                     break;
             }
@@ -843,7 +843,7 @@ namespace Diji_CS.UI
         {
             ComboBox combobox_m = (ComboBox)sender;
             int.TryParse(combobox_m.SelectedItem.ToString(), out m);
-            if (type.Equals("1"))
+            if (type == TYPE.TYPE1)
             {
                 redraw1();
             }
@@ -852,7 +852,7 @@ namespace Diji_CS.UI
         {
             ComboBox combobox_n = (ComboBox)sender;
             int.TryParse(combobox_n.SelectedItem.ToString(), out n);
-            if (type.Equals("1"))
+            if (type == TYPE.TYPE1)
             {
                 redraw1();
             }
@@ -863,7 +863,7 @@ namespace Diji_CS.UI
             bool result = false;
             switch (type)
             {
-                case "6":
+                case TYPE.TYPE6:
                     if (textbox_d.Text.Trim().Equals(""))
                     {
                         tip.Text = "D值无效";
@@ -882,7 +882,7 @@ namespace Diji_CS.UI
                         result = true;
                     }
                     break;
-                case "7":
+                case TYPE.TYPE7:
                     if (textbox_d.Text.Trim().Equals(""))
                     {
                         tip.Text = "D值无效";

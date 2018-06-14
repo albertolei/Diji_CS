@@ -26,66 +26,144 @@ namespace Diji_CS
 
         public void DataPoint(ref Point3d Point, Bentley.Interop.MicroStationDGN.View View)
         {
-            Element column, foundation, foundation_rebars, column_longitudinal_rebars, column_stirrups;
-            column = RCUtil.create_column(((StirrupData1)stirrupData).B, ((StirrupData1)stirrupData).H, 1500, 400);
-            foundation = RCUtil.create_foundation(1500, 1500, 400);
+            Element column = null, foundation = null, foundation_rebars = null, column_longitudinal_rebars = null, column_stirrups = null;
+            stirrupData = read_Data();
+            switch (stf.Type)
+            {
+                case TYPE.TYPE1:
+                    {
+                        StirrupData1 data = (StirrupData1)stirrupData;
+                        column = RCUtil.create_column(data.B, data.H, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
+                        column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(data.B, data.H, 1500, 1500, 1500, 400, 50, stf.Type, data.M, data.N);
+                        column_stirrups = StirrupUtil.create_column_stirrups(data.B, data.H, 1500, 400, stf.Type, data.M, data.N);
+                        foundation_rebars = FootingSlabBarUtil.create_foundation_rebars(1500, 1500, 400);
+                        break;
+                    }
+                case TYPE.TYPE2:
+                    {
+                        StirrupData2 data = (StirrupData2)stirrupData;
+                        column = RCUtil.create_column(data.B, data.H, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
+                        column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(data.B, data.H, 1500, 1500, 1500, 400, 50, stf.Type);
+                        column_stirrups = StirrupUtil.create_column_stirrups(data.B, data.H, 1500, 400, stf.Type);
+                        foundation_rebars = FootingSlabBarUtil.create_foundation_rebars(1500, 1500, 400);
+                        break;
+                    }
+                case TYPE.TYPE3:
+                    {
 
-
-            //column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(800, 800, 1500, 1500, 1500, 400, 50, "2");
-            //column_stirrups = StirrupUtil.create_column_stirrups(800, 800, 1500, 400, "2");
-            //foundation_rebars = FootingSlabBarUtil.create_foundation_rebars(1500, 1500, 400);
+                        break;
+                    }
+                case TYPE.TYPE4:
+                    {
+                        break;
+                    }
+                case TYPE.TYPE5:
+                    {
+                        break;
+                    }
+                case TYPE.TYPE6:
+                    {
+                        StirrupData6 data = (StirrupData6)stirrupData;
+                        column = RCUtil.create_column(data.D, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
+                        column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(data.D ,1500, 1500, 1500, 400, 50, stf.Type);
+                        column_stirrups = StirrupUtil.create_column_stirrups(data.D, 1500, 400, stf.Type);
+                        foundation_rebars = FootingSlabBarUtil.create_foundation_rebars(1500, 1500, 400);
+                        break;
+                    }
+                case TYPE.TYPE7:
+                    {
+                        StirrupData7 data = (StirrupData7)stirrupData;
+                        column = RCUtil.create_column(data.D, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
+                        column_longitudinal_rebars = LongitudinalBarUtil.create_column_longitudinal_rebars(data.D, 1500, 1500, 1500, 400, 50, stf.Type);
+                        column_stirrups = StirrupUtil.create_column_stirrups(data.D, 1500, 400, stf.Type);
+                        foundation_rebars = FootingSlabBarUtil.create_foundation_rebars(1500, 1500, 400);
+                        break;
+                    }
+            }
 
             TFPartRef tfpart_ref = TFPartUtil.create_tfpart_ref("Ceiling", "Metal");
             TFPartUtil.add_part_to_element(ref column, tfpart_ref);
             TFPartUtil.add_part_to_element(ref foundation, tfpart_ref);
-            //TFPartUtil.add_part_to_element(ref column_longitudinal_rebars, tfpart_ref);
-            //TFPartUtil.add_part_to_element(ref column_stirrups, tfpart_ref);
-            //TFPartUtil.add_part_to_element(ref foundation_rebars, tfpart_ref);
+            TFPartUtil.add_part_to_element(ref column_longitudinal_rebars, tfpart_ref);
+            TFPartUtil.add_part_to_element(ref column_stirrups, tfpart_ref);
+            TFPartUtil.add_part_to_element(ref foundation_rebars, tfpart_ref);
+
             column.Move(ref Point);
             foundation.Move(ref Point);
-            //column_longitudinal_rebars.Move(ref Point);
-            //column_stirrups.Move(ref Point);
-            //foundation_rebars.Move(ref Point);
+            column_longitudinal_rebars.Move(ref Point);
+            column_stirrups.Move(ref Point);
+            foundation_rebars.Move(ref Point);
 
             List<Element> elements = new List<Element>();
             elements.Add(column);
             elements.Add(foundation);
-            //elements.Add(column_longitudinal_rebars);
-            //elements.Add(column_stirrups);
-            //elements.Add(foundation_rebars);
+            elements.Add(column_longitudinal_rebars);
+            elements.Add(column_stirrups);
+            elements.Add(foundation_rebars);
 
             draw_Elements(elements.ToArray(), "diji");
-
-
-            TextBox textbox_b = (TextBox)stf.Controls.Find("textbox_b", true)[0];
-            string text_b = textbox_b.Text;
-            MessageBox.Show(text_b);
         }
 
         public void Dynamics(ref Point3d Point, Bentley.Interop.MicroStationDGN.View View, MsdDrawingMode DrawMode)
         {
-            TextBox textbox_b = (TextBox)stf.Controls.Find("textbox_b", true)[0];
-            double b = Double.Parse(textbox_b.Text);
-            TextBox textbox_h = (TextBox)stf.Controls.Find("textbox_h", true)[0];
-            double h = Double.Parse(textbox_h.Text);
-            ComboBox combobox_m = (ComboBox)stf.Controls.Find("combobox_m", true)[0];
-            int m = int.Parse(combobox_m.SelectedItem.ToString());
-            ComboBox combobox_n = (ComboBox)stf.Controls.Find("combobox_n", true)[0];
-            int n = int.Parse(combobox_n.SelectedItem.ToString());
-            stirrupData = new StirrupData1(b, h, m, n);
-
+            Element column = null, foundation = null;
+            stirrupData = read_Data();
+            switch (stf.Type) 
+            {
+                case TYPE.TYPE1:
+                    {
+                        StirrupData1 data = (StirrupData1)stirrupData;
+                        column = RCUtil.create_column(data.B, data.H, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
+                        break;
+                    }
+                case TYPE.TYPE2:
+                    {
+                        StirrupData2 data = (StirrupData2)stirrupData;
+                        column = RCUtil.create_column(data.B, data.H, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
+                        break;
+                    }
+                case TYPE.TYPE3: 
+                    {
+                        
+                        break;
+                    }
+                case TYPE.TYPE4:
+                    {
+                        break;
+                    }
+                case TYPE.TYPE5:
+                    {
+                        break;
+                    }
+                case TYPE.TYPE6:
+                    {
+                        StirrupData6 data = (StirrupData6)stirrupData;
+                        column = RCUtil.create_column(data.D, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
+                        break;
+                    }
+                case TYPE.TYPE7:
+                    {
+                        StirrupData7 data = (StirrupData7)stirrupData;
+                        column = RCUtil.create_column(data.D, 1500, 400);
+                        foundation = RCUtil.create_foundation(1500, 1500, 400);
+                        break;
+                    }
+            }
 
             //动态移动的时候不显示配筋，只有点击的时候才画配筋
-            Element column = RCUtil.create_column(b, h, 1500, 400), foundation = RCUtil.create_foundation(1500, 1500, 400);
-            //Element column = RCUtil.create_column(800, 1500, 400), foundation = RCUtil.create_foundation(1500, 1500, 400);
             column.Move(ref Point);
             foundation.Move(ref Point);
 
             //必须redraw，否侧元素不显示
             column.Redraw(DrawMode);
             foundation.Redraw(DrawMode);
-
-
         }
 
         public void Keyin(string Keyin)
@@ -95,6 +173,7 @@ namespace Diji_CS
 
         public void Reset()
         {
+            stf.Hide();
             app.CommandState.StartDefaultCommand();
         }
 
@@ -105,6 +184,7 @@ namespace Diji_CS
             app.ShowPrompt("请选择地基放置的中心点");
             stf = new StirrupForm();
             stf.Show();
+            
         }
 
         //添加元素
@@ -120,6 +200,63 @@ namespace Diji_CS
             TFApplicationList tfapp_list = new TFApplicationList();
             TFApplication tfapp = tfapp_list.TFApplication;
             tfapp.ModelReferenceAddFrame(app.ActiveModelReference, frame);
+        }
+        //读取界面数据
+        public IStirrupData read_Data() 
+        {
+            IStirrupData stirrup_data = null;
+            switch (stf.Type) 
+            {
+                case TYPE.TYPE1: 
+                    {
+                        TextBox textbox_b = (TextBox)stf.Controls.Find("textbox_b", true)[0];
+                        double b = Double.Parse(textbox_b.Text);
+                        TextBox textbox_h = (TextBox)stf.Controls.Find("textbox_h", true)[0];
+                        double h = Double.Parse(textbox_h.Text);
+                        ComboBox combobox_m = (ComboBox)stf.Controls.Find("combobox_m", true)[0];
+                        int m = int.Parse(combobox_m.SelectedItem.ToString());
+                        ComboBox combobox_n = (ComboBox)stf.Controls.Find("combobox_n", true)[0];
+                        int n = int.Parse(combobox_n.SelectedItem.ToString());
+                        stirrup_data = new StirrupData1(b, h, m, n);
+                        break;
+                    }
+                case TYPE.TYPE2:
+                    {
+                        TextBox textbox_b = (TextBox)stf.Controls.Find("textbox_b", true)[0];
+                        double b = Double.Parse(textbox_b.Text);
+                        TextBox textbox_h = (TextBox)stf.Controls.Find("textbox_h", true)[0];
+                        double h = Double.Parse(textbox_h.Text);
+                        stirrup_data = new StirrupData2(b, h);
+                        break; 
+                    }
+                case TYPE.TYPE3:
+                    {
+                        break;
+                    }
+                case TYPE.TYPE4:
+                    {
+                        break;
+                    }
+                case TYPE.TYPE5:
+                    {
+                        break;
+                    }
+                case TYPE.TYPE6:
+                    {
+                        TextBox textbox_d = (TextBox)stf.Controls.Find("textbox_d", true)[0];
+                        double d = Double.Parse(textbox_d.Text);
+                        stirrup_data = new StirrupData6(d);
+                        break;
+                    }
+                case TYPE.TYPE7:
+                    {
+                        TextBox textbox_d = (TextBox)stf.Controls.Find("textbox_d", true)[0];
+                        double d = Double.Parse(textbox_d.Text);
+                        stirrup_data = new StirrupData7(d);
+                        break;
+                    }
+            }
+            return stirrup_data;
         }
     }
 }

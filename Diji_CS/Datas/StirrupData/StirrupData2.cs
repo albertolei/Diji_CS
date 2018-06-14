@@ -14,7 +14,7 @@ namespace Diji_CS.Datas.StirrupData
             this.H = 800;
 
         }
-        public StirrupData2(double b, double h, int m, int n)
+        public StirrupData2(double b, double h)
         {
             this.Stirrup_type = TYPE.TYPE2;
             this.B = b;
